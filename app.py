@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 st.set_page_config(
-    page_title="AutoAssure · Prediction Reclamation",
+    page_title="AutoAssure · Prédiction Réclamation",
     page_icon="🚗",
     layout="wide",
     initial_sidebar_state="expanded",
