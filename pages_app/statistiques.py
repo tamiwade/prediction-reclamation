@@ -9,15 +9,15 @@ import os
 from utils_export import export_to_excel, generate_pdf_report
 
 PL = dict(
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(family="Plus Jakarta Sans, Inter, sans-serif", color="#cbd5e1"),
-    xaxis=dict(gridcolor="rgba(255,255,255,0.06)", linecolor="rgba(255,255,255,0.1)"),
-    yaxis=dict(gridcolor="rgba(255,255,255,0.06)", linecolor="rgba(255,255,255,0.1)"),
+    paper_bgcolor="#ffffff",
+    plot_bgcolor="#ffffff",
+    font=dict(family="Plus Jakarta Sans, Inter, sans-serif", color="#334155"),
+    xaxis=dict(gridcolor="#f1f5f9", linecolor="#cbd5e1", tickfont=dict(color="#475569")),
+    yaxis=dict(gridcolor="#f1f5f9", linecolor="#cbd5e1", tickfont=dict(color="#475569")),
     margin=dict(t=50, b=40, l=40, r=20),
-    colorway=["#818cf8","#34d399","#f59e0b","#ef4444","#c084fc","#06b6d4"],
+    colorway=["#4f46e5", "#059669", "#d97706", "#dc2626", "#7c3aed", "#0891b2"],
 )
-VIO = ["#818cf8", "#c084fc", "#f472b6", "#34d399", "#f59e0b", "#06b6d4"]
+VIO = ["#4f46e5", "#6366f1", "#8b5cf6", "#059669", "#d97706", "#0891b2"]
 
 @st.cache_data
 def load_geojson():
@@ -30,10 +30,10 @@ def pch(fig):
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 def stitle(title, sub=""):
-    sub_html = f"<p style='color:#a78bfa;font-size:0.8rem;margin:3px 0 0 0;'>{sub}</p>" if sub else ""
+    sub_html = f"<p style='color:#64748b;font-size:0.82rem;margin:3px 0 0 0;'>{sub}</p>" if sub else ""
     st.markdown(
-        f"<div style='margin:22px 0 14px 0;padding-bottom:8px;border-bottom:1px solid rgba(139,92,246,0.2);'>"
-        f"<span style='color:#f5d0fe;font-size:1.1rem;font-weight:700;'>{title}</span>"
+        f"<div style='margin:20px 0 14px 0;padding-bottom:8px;border-bottom:1px solid #e2e8f0;'>"
+        f"<span style='color:#0f172a;font-size:1.15rem;font-weight:700;'>{title}</span>"
         f"{sub_html}</div>",
         unsafe_allow_html=True
     )
@@ -48,19 +48,19 @@ def show():
     all_vars = [c for c in df.columns if c not in ["ID", target_col]]
 
     st.markdown(
-        "<div style='margin-bottom:24px;'>"
-        "<div style='color:#fdf4ff;font-size:1.85rem;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;'>"
+        "<div style='margin-bottom:20px;'>"
+        "<div style='color:#0f172a;font-size:1.75rem;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;'>"
         "📊 Dashboard Analytique & Études Statistiques</div>"
-        "<div style='color:#a78bfa;font-size:0.92rem;'>"
+        "<div style='color:#64748b;font-size:0.92rem;'>"
         "Sélectionnez une variable pour afficher son tableau de bord d'analyse multidimensionnel</div></div>",
         unsafe_allow_html=True
     )
 
     st.markdown(
-        "<div style='background:linear-gradient(135deg,rgba(124,58,237,0.18),rgba(168,85,247,0.1));"
-        "border:1px solid rgba(139,92,246,0.35);border-radius:16px;padding:20px 24px;margin-bottom:22px;'>"
-        "<div style='color:#c084fc;font-size:0.78rem;font-weight:700;text-transform:uppercase;"
-        "letter-spacing:0.1em;margin-bottom:12px;'>🎯 Sélection de la Variable d'Étude</div></div>",
+        "<div style='background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;"
+        "padding:16px 20px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.02);'>"
+        "<div style='color:#4338ca;font-size:0.75rem;font-weight:700;text-transform:uppercase;"
+        "letter-spacing:0.08em;margin-bottom:8px;'>🎯 Sélection de la Variable d'Étude</div></div>",
         unsafe_allow_html=True
     )
 
@@ -68,7 +68,7 @@ def show():
     with col_sel1:
         chosen_var = st.selectbox("Variable", options=all_vars, key="dash_chosen_var")
     with col_sel2:
-        show_target = st.checkbox("Croiser avec la variable cible", value=True, key="dash_show_target")
+        show_target = st.checkbox("Croiser avec la cible", value=True, key="dash_show_target")
 
     var_is_numeric = pd.api.types.is_numeric_dtype(df[chosen_var])
     df_clean = df[[chosen_var, target_col]].dropna().copy()
@@ -103,7 +103,7 @@ def show():
             tg = df.groupby(chosen_var)[target_col].mean()
             st.metric("Taux max récl.", f"{tg.max() * 100:.1f}%" if len(tg) > 0 else "N/A")
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<div style='height:12px;'></div>", unsafe_allow_html=True)
 
     if var_is_numeric:
         stitle("Analyse Univariée de la Variable Numérique", chosen_var)
@@ -114,14 +114,14 @@ def show():
                                nbins=40, marginal="rug",
                                color_discrete_sequence=VIO, barmode="overlay", opacity=0.75,
                                title=f"Distribution - {chosen_var}")
-            fig.update_layout(**PL, title_font_color="#f5d0fe", legend=dict(font=dict(color="#c4b5fd")))
+            fig.update_layout(**PL, title_font_color="#0f172a", legend=dict(font=dict(color="#334155")))
             pch(fig)
         with r1c2:
             fig2 = px.box(df_clean, x="Classe" if show_target else None, y=chosen_var,
                           color="Classe" if show_target else None,
                           color_discrete_sequence=VIO, points="outliers",
                           title=f"Boîte à moustaches - {chosen_var}")
-            fig2.update_layout(**PL, title_font_color="#f5d0fe", showlegend=False)
+            fig2.update_layout(**PL, title_font_color="#0f172a", showlegend=False)
             pch(fig2)
 
         r2c1, r2c2 = st.columns(2)
@@ -130,14 +130,14 @@ def show():
                              color="Classe" if show_target else None,
                              color_discrete_sequence=VIO, box=True, points="outliers",
                              title=f"Violin plot - {chosen_var}")
-            fig3.update_layout(**PL, title_font_color="#f5d0fe", showlegend=False)
+            fig3.update_layout(**PL, title_font_color="#0f172a", showlegend=False)
             pch(fig3)
         with r2c2:
             fig4 = px.ecdf(df_clean, x=chosen_var,
                            color="Classe" if show_target else None,
                            color_discrete_sequence=VIO,
                            title=f"Distribution cumulée (ECDF) - {chosen_var}")
-            fig4.update_layout(**PL, title_font_color="#f5d0fe", legend=dict(font=dict(color="#c4b5fd")))
+            fig4.update_layout(**PL, title_font_color="#0f172a", legend=dict(font=dict(color="#334155")))
             pch(fig4)
 
         if show_target:
@@ -154,20 +154,20 @@ def show():
             with tr1:
                 fig_t1 = px.bar(tranche_stats, x="Tranche", y="Effectif",
                                 color="Effectif",
-                                color_continuous_scale=["#302b63", "#818cf8", "#c084fc"],
+                                color_continuous_scale=["#e0e7ff", "#6366f1", "#312e81"],
                                 title=f"Effectif par tranche - {chosen_var}", text="Effectif")
                 fig_t1.update_traces(texttemplate="%{text:,}", textposition="outside")
-                fig_t1.update_layout(**PL, title_font_color="#f5d0fe",
+                fig_t1.update_layout(**PL, title_font_color="#0f172a",
                                      coloraxis_showscale=False, xaxis_tickangle=-30)
                 pch(fig_t1)
             with tr2:
                 fig_t2 = px.bar(tranche_stats, x="Tranche", y="Taux_pct",
                                 color="Taux_pct",
-                                color_continuous_scale=["#302b63", "#f59e0b", "#ef4444"],
+                                color_continuous_scale=["#fef3c7", "#f59e0b", "#dc2626"],
                                 title=f"Taux de réclamation (%) par tranche - {chosen_var}",
                                 text="Taux_pct")
                 fig_t2.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
-                fig_t2.update_layout(**PL, title_font_color="#f5d0fe",
+                fig_t2.update_layout(**PL, title_font_color="#0f172a",
                                      coloraxis_showscale=False, xaxis_tickangle=-30)
                 pch(fig_t2)
 
@@ -196,10 +196,10 @@ def show():
         r1c1, r1c2 = st.columns(2)
         with r1c1:
             fig_b = px.bar(vc, x=chosen_var, y="Effectif", color="Effectif",
-                           color_continuous_scale=["#302b63", "#818cf8", "#c084fc"],
+                           color_continuous_scale=["#e0e7ff", "#6366f1", "#312e81"],
                            text="Effectif", title=f"Effectifs - {chosen_var}")
             fig_b.update_traces(texttemplate="%{text:,}", textposition="outside")
-            fig_b.update_layout(**PL, title_font_color="#f5d0fe",
+            fig_b.update_layout(**PL, title_font_color="#0f172a",
                                 coloraxis_showscale=False, xaxis_tickangle=-20)
             pch(fig_b)
         with r1c2:
@@ -207,9 +207,9 @@ def show():
                            color_discrete_sequence=VIO, hole=0.5,
                            title=f"Répartition - {chosen_var}")
             fig_p.update_traces(textposition="outside", textfont_size=12,
-                                marker=dict(line=dict(color="rgba(0,0,0,0.3)", width=2)))
-            fig_p.update_layout(**PL, title_font_color="#f5d0fe",
-                                legend=dict(font=dict(color="#c4b5fd")))
+                                marker=dict(line=dict(color="#ffffff", width=2)))
+            fig_p.update_layout(**PL, title_font_color="#0f172a",
+                                legend=dict(font=dict(color="#334155")))
             pch(fig_p)
 
         if show_target:
@@ -222,11 +222,11 @@ def show():
                 )
                 fig_gb = px.bar(pivot, x=chosen_var, y="n", color="Classe",
                                 barmode="group", text="n",
-                                color_discrete_sequence=["#34d399", "#818cf8"],
+                                color_discrete_sequence=["#059669", "#6366f1"],
                                 title=f"{chosen_var} croisé avec {target_col}")
                 fig_gb.update_traces(texttemplate="%{text:,}", textposition="outside")
-                fig_gb.update_layout(**PL, title_font_color="#f5d0fe",
-                                     legend=dict(font=dict(color="#c4b5fd")), xaxis_tickangle=-20)
+                fig_gb.update_layout(**PL, title_font_color="#0f172a",
+                                     legend=dict(font=dict(color="#334155")), xaxis_tickangle=-20)
                 pch(fig_gb)
             with r2c2:
                 taux = df.groupby(chosen_var)[target_col].mean().reset_index()
@@ -234,10 +234,10 @@ def show():
                 taux["Taux (%)"] = (taux["Taux (%)"] * 100).round(2)
                 taux = taux.sort_values("Taux (%)", ascending=False)
                 fig_t = px.bar(taux, x=chosen_var, y="Taux (%)", color="Taux (%)",
-                               color_continuous_scale=["#302b63", "#f59e0b", "#ef4444"],
+                               color_continuous_scale=["#fef3c7", "#f59e0b", "#dc2626"],
                                text="Taux (%)", title=f"Taux de réclamation (%) par {chosen_var}")
                 fig_t.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
-                fig_t.update_layout(**PL, title_font_color="#f5d0fe",
+                fig_t.update_layout(**PL, title_font_color="#0f172a",
                                     coloraxis_showscale=False, xaxis_tickangle=-20)
                 pch(fig_t)
 
@@ -251,19 +251,19 @@ def show():
                 pct_df["Pct"] = (pct_df["n"] / tot * 100).round(1)
                 fig_stk = px.bar(pct_df, x=chosen_var, y="Pct", color="Classe",
                                  barmode="stack", text="Pct",
-                                 color_discrete_sequence=["#34d399", "#818cf8"],
+                                 color_discrete_sequence=["#059669", "#6366f1"],
                                  title=f"Répartition normalisée 100% - {chosen_var}")
                 fig_stk.update_traces(texttemplate="%{text:.0f}%", textposition="inside")
-                fig_stk.update_layout(**PL, title_font_color="#f5d0fe",
-                                      legend=dict(font=dict(color="#c4b5fd")), xaxis_tickangle=-20)
+                fig_stk.update_layout(**PL, title_font_color="#0f172a",
+                                      legend=dict(font=dict(color="#334155")), xaxis_tickangle=-20)
                 pch(fig_stk)
             with r3c2:
                 tc_df = df_clean.groupby([chosen_var, "Classe"]).size().reset_index(name="n")
                 fig_tm = px.treemap(tc_df, path=[chosen_var, "Classe"], values="n",
                                     color="n",
-                                    color_continuous_scale=["#302b63", "#818cf8", "#c084fc"],
+                                    color_continuous_scale=["#e0e7ff", "#6366f1", "#312e81"],
                                     title=f"Treemap hiérarchique : {chosen_var} × Classe")
-                fig_tm.update_layout(**PL, title_font_color="#f5d0fe", coloraxis_showscale=False)
+                fig_tm.update_layout(**PL, title_font_color="#0f172a", coloraxis_showscale=False)
                 pch(fig_tm)
 
         stitle("Tableau Récapitulatif Détaillé des Modalités")
@@ -287,20 +287,20 @@ def show():
             df_corr = df[num_for_corr].dropna()
             corr_matrix = df_corr.corr().round(3)
             fig_corr = px.imshow(corr_matrix,
-                                 color_continuous_scale=["#0f0c29", "#302b63", "#818cf8", "#c084fc", "#f8faff"],
+                                 color_continuous_scale=["#1e3a8a", "#60a5fa", "#ffffff", "#f87171", "#991b1b"],
                                  zmin=-1, zmax=1, text_auto=True,
                                  title="Matrice de corrélation de Pearson", aspect="auto")
-            fig_corr.update_layout(**PL, title_font_color="#f5d0fe", height=550)
+            fig_corr.update_layout(**PL, title_font_color="#0f172a", height=550)
             pch(fig_corr)
             if target_col in num_for_corr:
                 stitle("Hiérarchie d'Association avec la Variable Cible", f"Intensité de corrélation avec {target_col}")
                 corr_target = corr_matrix[target_col].drop(target_col).abs().sort_values(ascending=False)
                 fig_ci = px.bar(x=corr_target.values, y=corr_target.index, orientation="h",
                                 color=corr_target.values,
-                                color_continuous_scale=["#302b63", "#818cf8", "#c084fc"],
+                                color_continuous_scale=["#e0e7ff", "#6366f1", "#312e81"],
                                 title=f"Importance (|corrélation|) avec {target_col}",
                                 labels={"x": "Corrélation absolue", "y": "Variable"})
-                fig_ci.update_layout(**PL, title_font_color="#f5d0fe",
+                fig_ci.update_layout(**PL, title_font_color="#0f172a",
                                      coloraxis_showscale=False, height=380)
                 pch(fig_ci)
         else:
@@ -323,10 +323,10 @@ def show():
         x_num = pd.api.types.is_numeric_dtype(df[col_x])
         y_num = pd.api.types.is_numeric_dtype(df[col_y])
         cc = "Classe" if hue_opt else None
-        cs = ["#34d399", "#818cf8"]
+        cs = ["#059669", "#6366f1"]
         if x_num and y_num:
             fig_c = px.scatter(df_cr, x=col_x, y=col_y, color=cc,
-                               color_discrete_sequence=cs, opacity=0.55,
+                               color_discrete_sequence=cs, opacity=0.6,
                                trendline="ols" if not hue_opt else None,
                                title=f"{col_x} vs {col_y}")
         elif not x_num and y_num:
@@ -338,9 +338,9 @@ def show():
         else:
             pivot_hm = pd.crosstab(df_cr[col_x], df_cr[col_y])
             fig_c = px.imshow(pivot_hm,
-                              color_continuous_scale=["#0f0c29", "#818cf8", "#c084fc"],
+                              color_continuous_scale=["#f8fafc", "#c7d2fe", "#4338ca"],
                               title=f"Tableau croisé : {col_x} × {col_y}", text_auto=True)
-        fig_c.update_layout(**PL, title_font_color="#f5d0fe", legend=dict(font=dict(color="#c4b5fd")))
+        fig_c.update_layout(**PL, title_font_color="#0f172a", legend=dict(font=dict(color="#334155")))
         pch(fig_c)
 
     with tabs_extra[2]:
@@ -401,9 +401,9 @@ def show():
                     map_merged, geojson=geojson_data,
                     locations="DEPT", featureidkey="properties.code",
                     color="Taux_Affiche",
-                    color_continuous_scale=["#f1f5f9", "#38bdf8", "#3b82f6", "#f59e0b", "#ef4444"],
+                    color_continuous_scale=["#f1f5f9", "#93c5fd", "#3b82f6", "#f59e0b", "#dc2626"],
                     range_color=[0, 100], map_style=style_code,
-                    center={"lat": 46.5, "lon": 2.2}, zoom=4.8, opacity=0.75,
+                    center={"lat": 46.5, "lon": 2.2}, zoom=4.8, opacity=0.8,
                     hover_name=hn_col,
                     hover_data={"DEPT": True, "Assures": True, "Taux_Affiche": ":.1f"},
                     labels={"Taux_Affiche": label_color, "DEPT": "Code", "Assures": "Total Assurés"}
@@ -413,18 +413,18 @@ def show():
                     map_merged, geojson=geojson_data,
                     locations="DEPT", featureidkey="properties.code",
                     color="Taux_Affiche",
-                    color_continuous_scale=["#f1f5f9", "#38bdf8", "#3b82f6", "#f59e0b", "#ef4444"],
+                    color_continuous_scale=["#f1f5f9", "#93c5fd", "#3b82f6", "#f59e0b", "#dc2626"],
                     range_color=[0, 100], mapbox_style=style_code,
-                    center={"lat": 46.5, "lon": 2.2}, zoom=4.8, opacity=0.75,
+                    center={"lat": 46.5, "lon": 2.2}, zoom=4.8, opacity=0.8,
                     hover_name=hn_col,
                     hover_data={"DEPT": True, "Assures": True, "Taux_Affiche": ":.1f"},
                     labels={"Taux_Affiche": label_color, "DEPT": "Code", "Assures": "Total Assurés"}
                 )
             fig_map.update_layout(
                 margin=dict(r=0, t=10, l=0, b=0), height=560,
-                paper_bgcolor="rgba(0,0,0,0)",
-                coloraxis_colorbar=dict(title=label_color, tickfont=dict(color="#94a3b8"),
-                                        title_font=dict(color="#f8fafc", size=12))
+                paper_bgcolor="#ffffff",
+                coloraxis_colorbar=dict(title=label_color, tickfont=dict(color="#475569"),
+                                        title_font=dict(color="#0f172a", size=12))
             )
             pch(fig_map)
 
