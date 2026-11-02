@@ -19,11 +19,11 @@ except ImportError:
 from utils_export import export_to_excel, export_model_joblib, generate_pdf_report
 
 PLOTLY_LAYOUT = dict(
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(family="Inter", color="#c4c4e0"),
-    xaxis=dict(gridcolor="rgba(255,255,255,0.06)", linecolor="rgba(255,255,255,0.1)"),
-    yaxis=dict(gridcolor="rgba(255,255,255,0.06)", linecolor="rgba(255,255,255,0.1)"),
+    paper_bgcolor="#ffffff",
+    plot_bgcolor="#ffffff",
+    font=dict(family="Plus Jakarta Sans, Inter, sans-serif", color="#334155"),
+    xaxis=dict(gridcolor="#f1f5f9", linecolor="#cbd5e1", tickfont=dict(color="#475569")),
+    yaxis=dict(gridcolor="#f1f5f9", linecolor="#cbd5e1", tickfont=dict(color="#475569")),
     margin=dict(t=50, b=40, l=40, r=20),
 )
 
@@ -63,8 +63,8 @@ def train_model(model_name, X_train, X_test, X_train_s, X_test_s, y_train, y_tes
                 n_estimators=100, max_depth=5, lr_C=1.0, xgb_lr=0.1):
     models = {
         "Random Forest": RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth if max_depth > 0 else None, random_state=42, n_jobs=-1),
-        "Regression Logistique": LogisticRegression(C=lr_C, max_iter=1000, random_state=42),
-        "Arbre de Decision": DecisionTreeClassifier(max_depth=max_depth if max_depth > 0 else None, random_state=42),
+        "Régression Logistique": LogisticRegression(C=lr_C, max_iter=1000, random_state=42),
+        "Arbre de Décision": DecisionTreeClassifier(max_depth=max_depth if max_depth > 0 else None, random_state=42),
     }
     if HAS_XGB:
         models["XGBoost"] = XGBClassifier(n_estimators=n_estimators, max_depth=max_depth if max_depth > 0 else 6,
@@ -72,7 +72,7 @@ def train_model(model_name, X_train, X_test, X_train_s, X_test_s, y_train, y_tes
                                            eval_metric="logloss", random_state=42, verbosity=0)
 
     model = models[model_name]
-    needs_scale = model_name in ["Regression Logistique"]
+    needs_scale = model_name in ["Régression Logistique", "Regression Logistique"]
     Xt = X_train_s if needs_scale else X_train
     Xs = X_test_s  if needs_scale else X_test
 
@@ -96,20 +96,20 @@ def show():
 
     st.markdown("""
     <div style="margin-bottom:20px;">
-        <div style="color:#f8fafc;font-size:1.8rem;font-weight:800;letter-spacing:-0.5px;">
+        <div style="color:#0f172a; font-size:1.75rem; font-weight:800; letter-spacing:-0.5px;">
             Modélisation Prédictive & Évaluation des Modèles
         </div>
-        <div style="color:#94a3b8;font-size:0.92rem;margin-top:3px;">
+        <div style="color:#64748b; font-size:0.92rem; margin-top:3px;">
             Sélectionnez un modèle de Machine Learning, configurez ses hyperparamètres et évaluez ses performances décisionnelles
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Panneau de configuration principal (Directement sur la page) ───────────
+    # 1. Sélection du modèle
     st.markdown("""
-    <div style="background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.08);
-                border-radius:12px;padding:20px 24px;margin-bottom:20px;">
-        <div style="color:#38bdf8;font-weight:700;font-size:1rem;margin-bottom:14px;">
+    <div style="background:#ffffff; border:1px solid #e2e8f0;
+                border-radius:14px; padding:18px 22px; margin-bottom:18px; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+        <div style="color:#4338ca; font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px;">
             1. Sélection du Modèle de Machine Learning
         </div>
     </div>
@@ -140,9 +140,9 @@ def show():
         st.info(model_descriptions.get(model_name, ""))
 
     st.markdown("""
-    <div style="background:rgba(30,41,59,0.3);border:1px solid rgba(255,255,255,0.06);
-                border-radius:10px;padding:16px 20px;margin:16px 0 20px 0;">
-        <div style="color:#f8fafc;font-weight:600;font-size:0.9rem;margin-bottom:10px;">
+    <div style="background:#ffffff; border:1px solid #e2e8f0;
+                border-radius:14px; padding:16px 20px; margin:16px 0 18px 0; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+        <div style="color:#4338ca; font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">
             2. Partition des Données & Hyperparamètres de l'Algorithme
         </div>
     </div>
@@ -173,7 +173,7 @@ def show():
     with p3:
         if model_name == "XGBoost":
             xgb_lr = st.slider("Taux d'apprentissage (learning_rate)", 0.01, 0.4, 0.1, 0.02, key="main_xgb_lr")
-        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
         run_btn = st.button("🚀 Entraîner le Modèle Machine Learning", key="main_train_btn", type="primary")
 
     # Mémorisation du modèle entraîné
@@ -184,7 +184,7 @@ def show():
 
         if run_btn:
             with st.spinner(f"Entraînement de {model_name} en cours..."):
-                train_name = "Regression Logistique" if "Régression" in model_name else ("Arbre de Decision" if "Arbre" in model_name else model_name)
+                train_name = "Régression Logistique" if "Régression" in model_name else ("Arbre de Décision" if "Arbre" in model_name else model_name)
                 result = train_model(train_name, X_train, X_test, X_train_s, X_test_s,
                                      y_train, y_test, n_est, max_d, lr_C, xgb_lr)
             st.session_state[model_key] = (model_name, result, feat_names)
@@ -199,7 +199,7 @@ def show():
         _, y_pred, y_proba, acc, auc, cm, report, feature_imp, _, _ = result
 
         st.markdown("---")
-        st.markdown(f'<div style="color:#f8fafc;font-size:1.2rem;font-weight:700;margin-bottom:16px;">Résultats de performance : <span style="color:#38bdf8;">{model_name}</span></div>', unsafe_allow_html=True)
+        st.markdown(f'<div style="color:#0f172a;font-size:1.2rem;font-weight:700;margin-bottom:14px;">Résultats de performance : <span style="color:#4f46e5;">{model_name}</span></div>', unsafe_allow_html=True)
 
         m1,m2,m3,m4 = st.columns(4)
         with m1: st.metric("Accuracy", f"{acc:.4f}", f"{acc*100:.2f}%")
@@ -215,12 +215,12 @@ def show():
 
         with tab1:
             fig_cm = px.imshow(cm, text_auto=True,
-                               color_continuous_scale=["#0f0c29","#302b63","#818cf8"],
+                               color_continuous_scale=["#f8fafc", "#c7d2fe", "#4338ca"],
                                title="Matrice de confusion",
                                labels=dict(x="Prédit", y="Réel"),
                                x=["Sans récl. (0)","Réclamation (1)"],
                                y=["Sans récl. (0)","Réclamation (1)"])
-            fig_cm.update_layout(**PLOTLY_LAYOUT, title_font_color="#e0e0ff",
+            fig_cm.update_layout(**PLOTLY_LAYOUT, title_font_color="#0f172a",
                                   coloraxis_showscale=False, height=380)
             st.plotly_chart(fig_cm, use_container_width=True, config={"displayModeBar":False})
 
@@ -229,14 +229,14 @@ def show():
                 fpr, tpr, _ = roc_curve(y_test, y_proba)
                 fig_roc = go.Figure()
                 fig_roc.add_trace(go.Scatter(x=fpr, y=tpr, mode="lines",
-                                              line=dict(color="#818cf8", width=2.5),
+                                              line=dict(color="#4f46e5", width=2.5),
                                               name=f"AUC = {auc:.4f}"))
                 fig_roc.add_trace(go.Scatter(x=[0,1], y=[0,1], mode="lines",
-                                              line=dict(color="rgba(255,255,255,0.3)", dash="dash"),
+                                              line=dict(color="#94a3b8", dash="dash"),
                                               name="Aléatoire"))
                 fig_roc.update_layout(**PLOTLY_LAYOUT, title="Courbe ROC",
-                                       title_font_color="#e0e0ff",
-                                       legend=dict(font=dict(color="#c4c4e0")))
+                                       title_font_color="#0f172a",
+                                       legend=dict(font=dict(color="#334155")))
                 st.plotly_chart(fig_roc, use_container_width=True, config={"displayModeBar":False})
             else:
                 st.info("Courbe ROC non disponible pour ce modèle.")
@@ -251,16 +251,16 @@ def show():
                 fi_df = fi_df.sort_values("Importance", ascending=False).head(15)
                 fig_fi = px.bar(fi_df, x="Importance", y="Variable", orientation="h",
                                 color="Importance",
-                                color_continuous_scale=["#302b63","#818cf8","#c084fc"],
+                                color_continuous_scale=["#e0e7ff", "#6366f1", "#312e81"],
                                 title="Top 15 variables les plus importantes")
-                fig_fi.update_layout(**PLOTLY_LAYOUT, title_font_color="#e0e0ff",
+                fig_fi.update_layout(**PLOTLY_LAYOUT, title_font_color="#0f172a",
                                       coloraxis_showscale=False, height=450)
                 st.plotly_chart(fig_fi, use_container_width=True, config={"displayModeBar":False})
             else:
                 st.info("L'importance des variables n'est pas disponible pour ce modèle.")
 
         st.markdown("---")
-        st.markdown('<div style="color:#e0e0ff;font-size:1.1rem;font-weight:700;margin-bottom:12px;">Centre d\'exportation des résultats & Modèle</div>', unsafe_allow_html=True)
+        st.markdown('<div style="color:#0f172a;font-size:1.1rem;font-weight:700;margin-bottom:12px;">Centre d\'exportation des résultats & Modèle</div>', unsafe_allow_html=True)
         col_exp1, col_exp2, col_exp3 = st.columns(3)
 
         with col_exp1:
@@ -276,17 +276,17 @@ def show():
 
         with col_exp2:
             metrics_df = pd.DataFrame([{
-                "Modele": model_name,
+                "Modèle": model_name,
                 "Accuracy": acc,
                 "AUC-ROC": auc if auc else "N/A",
-                "Precision": report.get("1", {}).get("precision", 0),
-                "Recall": report.get("1", {}).get("recall", 0),
+                "Précision": report.get("1", {}).get("precision", 0),
+                "Rappel": report.get("1", {}).get("recall", 0),
                 "F1-Score": report.get("1", {}).get("f1-score", 0)
             }])
             excel_metrics = export_to_excel({
                 "Performances": metrics_df,
-                "Rapport_Detaille": pd.DataFrame(report).T.reset_index().rename(columns={"index": "Classe"}),
-                "Matrice_Confusion": pd.DataFrame(cm, index=["Reel_0", "Reel_1"], columns=["Predit_0", "Predit_1"]).reset_index()
+                "Rapport_Détaillé": pd.DataFrame(report).T.reset_index().rename(columns={"index": "Classe"}),
+                "Matrice_Confusion": pd.DataFrame(cm, index=["Réel_0", "Réel_1"], columns=["Prédit_0", "Prédit_1"]).reset_index()
             })
             st.download_button(
                 label="📊 Exporter les métriques (.xlsx)",
@@ -324,7 +324,7 @@ def show():
             )
 
         st.markdown("---")
-        st.markdown('<div style="color:#e0e0ff;font-size:1.1rem;font-weight:700;margin-bottom:16px;">Simulation & Prédiction sur un Nouvel Assuré</div>', unsafe_allow_html=True)
+        st.markdown('<div style="color:#0f172a;font-size:1.1rem;font-weight:700;margin-bottom:16px;">Simulation & Prédiction sur un Nouvel Assuré</div>', unsafe_allow_html=True)
 
         with st.expander("Saisir les caractéristiques du contrat et du conducteur", expanded=True):
             c1,c2,c3 = st.columns(3)
@@ -400,25 +400,25 @@ def show():
 
                 if prediction == 1:
                     st.markdown(f"""
-                    <div style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);
-                                border-radius:14px;padding:20px 24px;text-align:center;">
+                    <div style="background:#fef2f2; border:1px solid #fca5a5;
+                                border-radius:14px; padding:20px 24px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.03);">
                         <div style="font-size:2rem;">⚠️</div>
-                        <div style="color:#ef4444;font-size:1.2rem;font-weight:700;margin-top:8px;">
+                        <div style="color:#b91c1c; font-size:1.2rem; font-weight:700; margin-top:8px;">
                             Risque Élevé : Réclamation Probable</div>
-                        <div style="color:rgba(224,224,255,0.8);font-size:0.95rem;margin-top:4px;">
-                            {'Probabilité estimée : ' + f'{proba_val*100:.1f}%' if proba_val else ''}
+                        <div style="color:#7f1d1d; font-size:0.95rem; margin-top:4px;">
+                            {'Probabilité estimée : ' + f'<b>{proba_val*100:.1f}%</b>' if proba_val else ''}
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
                 else:
                     st.markdown(f"""
-                    <div style="background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.35);
-                                border-radius:14px;padding:20px 24px;text-align:center;">
+                    <div style="background:#f0fdf4; border:1px solid #86efac;
+                                border-radius:14px; padding:20px 24px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.03);">
                         <div style="font-size:2rem;">✓</div>
-                        <div style="color:#34d399;font-size:1.2rem;font-weight:700;margin-top:8px;">
+                        <div style="color:#15803d; font-size:1.2rem; font-weight:700; margin-top:8px;">
                             Profil Favorable : Pas de Réclamation Prévue</div>
-                        <div style="color:rgba(224,224,255,0.8);font-size:0.95rem;margin-top:4px;">
-                            {'Probabilité de réclamation : ' + f'{proba_val*100:.1f}%' if proba_val else ''}
+                        <div style="color:#14532d; font-size:0.95rem; margin-top:4px;">
+                            {'Probabilité de réclamation : ' + f'<b>{proba_val*100:.1f}%</b>' if proba_val else ''}
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
