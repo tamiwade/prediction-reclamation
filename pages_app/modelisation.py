@@ -206,10 +206,10 @@ def show():
         with m2: st.metric("AUC-ROC", f"{auc:.4f}" if auc else "N/A")
         with m3:
             prec = report.get("1",{}).get("precision",0)
-            st.metric("Precision (classe 1)", f"{prec:.4f}")
+            st.metric("Précision (classe 1)", f"{prec:.4f}")
         with m4:
             rec = report.get("1",{}).get("recall",0)
-            st.metric("Recall (classe 1)", f"{rec:.4f}")
+            st.metric("Rappel (classe 1)", f"{rec:.4f}")
 
         tab1, tab2, tab3, tab4 = st.tabs(["Matrice de confusion","Courbe ROC","Rapport de classification","Importance des variables"])
 
@@ -217,9 +217,9 @@ def show():
             fig_cm = px.imshow(cm, text_auto=True,
                                color_continuous_scale=["#0f0c29","#302b63","#818cf8"],
                                title="Matrice de confusion",
-                               labels=dict(x="Predit", y="Reel"),
-                               x=["Pas recl. (0)","Recl. (1)"],
-                               y=["Pas recl. (0)","Recl. (1)"])
+                               labels=dict(x="Prédit", y="Réel"),
+                               x=["Sans récl. (0)","Réclamation (1)"],
+                               y=["Sans récl. (0)","Réclamation (1)"])
             fig_cm.update_layout(**PLOTLY_LAYOUT, title_font_color="#e0e0ff",
                                   coloraxis_showscale=False, height=380)
             st.plotly_chart(fig_cm, use_container_width=True, config={"displayModeBar":False})
@@ -233,13 +233,13 @@ def show():
                                               name=f"AUC = {auc:.4f}"))
                 fig_roc.add_trace(go.Scatter(x=[0,1], y=[0,1], mode="lines",
                                               line=dict(color="rgba(255,255,255,0.3)", dash="dash"),
-                                              name="Aleatoire"))
+                                              name="Aléatoire"))
                 fig_roc.update_layout(**PLOTLY_LAYOUT, title="Courbe ROC",
                                        title_font_color="#e0e0ff",
                                        legend=dict(font=dict(color="#c4c4e0")))
                 st.plotly_chart(fig_roc, use_container_width=True, config={"displayModeBar":False})
             else:
-                st.info("Courbe ROC non disponible pour ce modele.")
+                st.info("Courbe ROC non disponible pour ce modèle.")
 
         with tab3:
             rep_df = pd.DataFrame(report).T.round(4)
@@ -257,7 +257,7 @@ def show():
                                       coloraxis_showscale=False, height=450)
                 st.plotly_chart(fig_fi, use_container_width=True, config={"displayModeBar":False})
             else:
-                st.info("L importance des variables n est pas disponible pour ce modele.")
+                st.info("L'importance des variables n'est pas disponible pour ce modèle.")
 
         st.markdown("---")
         st.markdown('<div style="color:#e0e0ff;font-size:1.1rem;font-weight:700;margin-bottom:12px;">Centre d\'exportation des résultats & Modèle</div>', unsafe_allow_html=True)
@@ -324,35 +324,35 @@ def show():
             )
 
         st.markdown("---")
-        st.markdown('<div style="color:#e0e0ff;font-size:1.1rem;font-weight:700;margin-bottom:16px;">Prediction sur un nouvel assure</div>', unsafe_allow_html=True)
+        st.markdown('<div style="color:#e0e0ff;font-size:1.1rem;font-weight:700;margin-bottom:16px;">Simulation & Prédiction sur un Nouvel Assuré</div>', unsafe_allow_html=True)
 
-        with st.expander("Saisir les informations du nouvel assure", expanded=True):
+        with st.expander("Saisir les caractéristiques du contrat et du conducteur", expanded=True):
             c1,c2,c3 = st.columns(3)
 
             with c1:
-                age     = st.selectbox("Age", ["16-25","26-39","40-64","65+"], key="p_age")
+                age     = st.selectbox("Tranche d'âge", ["16-25","26-39","40-64","65+"], key="p_age")
                 gender  = st.selectbox("Genre", ["male","female"], key="p_gender")
-                race    = st.selectbox("Race", ["majority","minority"], key="p_race")
-                drive_exp = st.selectbox("Experience conduite", ["0-9y","10-19y","20-29y","30y+"], key="p_drive")
-                educ    = st.selectbox("Education", ["high school","none","university"], key="p_educ")
-                income  = st.selectbox("Revenu", ["poverty","working class","middle class","upper class"], key="p_income")
+                race    = st.selectbox("Catégorie sociodémographique", ["majority","minority"], key="p_race")
+                drive_exp = st.selectbox("Expérience de conduite", ["0-9y","10-19y","20-29y","30y+"], key="p_drive")
+                educ    = st.selectbox("Niveau d'études", ["high school","none","university"], key="p_educ")
+                income  = st.selectbox("Niveau de revenu", ["poverty","working class","middle class","upper class"], key="p_income")
 
             with c2:
-                credit  = st.slider("Credit Score", 0.0, 1.0, 0.5, 0.01, key="p_credit")
-                vehicle_own = st.selectbox("Proprietaire vehicule", [0,1], key="p_vown")
-                vehicle_year = st.selectbox("Annee vehicule", ["before 2015","after 2015"], key="p_vyear")
-                married = st.selectbox("Marie(e)", [0,1], key="p_married")
-                children = st.selectbox("Enfants", [0,1], key="p_children")
+                credit  = st.slider("Score de crédit", 0.0, 1.0, 0.5, 0.01, key="p_credit")
+                vehicle_own = st.selectbox("Propriétaire du véhicule (1=Oui, 0=Non)", [0,1], key="p_vown")
+                vehicle_year = st.selectbox("Année du véhicule", ["before 2015","after 2015"], key="p_vyear")
+                married = st.selectbox("Statut marital (1=Marié, 0=Célibataire)", [0,1], key="p_married")
+                children = st.selectbox("Enfants à charge (1=Oui, 0=Non)", [0,1], key="p_children")
                 postal  = st.selectbox("Code postal", [10238,32765,92101], key="p_postal")
 
             with c3:
-                mileage = st.number_input("Kilometrage annuel", 2000, 25000, 12000, 500, key="p_mileage")
-                vtype   = st.selectbox("Type vehicule", ["sedan","sports car"], key="p_vtype")
-                speeding = st.number_input("Violations excès vitesse", 0, 20, 0, key="p_speed")
-                duis    = st.number_input("DUI", 0, 10, 0, key="p_duis")
-                past_acc = st.number_input("Accidents passes", 0, 15, 0, key="p_acc")
+                mileage = st.number_input("Kilométrage annuel estimé", 2000, 25000, 12000, 500, key="p_mileage")
+                vtype   = st.selectbox("Type de carrosserie", ["sedan","sports car"], key="p_vtype")
+                speeding = st.number_input("Infractions pour excès de vitesse", 0, 20, 0, key="p_speed")
+                duis    = st.number_input("Conduite sous influence (DUI)", 0, 10, 0, key="p_duis")
+                past_acc = st.number_input("Nombre d'accidents passés", 0, 15, 0, key="p_acc")
 
-            if st.button("Predire", key="predict_btn"):
+            if st.button("🎯 Calculer le Risque & Prédire", key="predict_btn", type="primary"):
                 sample_data = {
                     "AGE": age, "GENDER": gender, "RACE": race,
                     "DRIVING_EXPERIENCE": drive_exp, "EDUCATION": educ, "INCOME": income,
@@ -400,13 +400,13 @@ def show():
 
                 if prediction == 1:
                     st.markdown(f"""
-                    <div style="background:rgba(129,140,248,0.15);border:1px solid rgba(129,140,248,0.4);
+                    <div style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);
                                 border-radius:14px;padding:20px 24px;text-align:center;">
-                        <div style="font-size:2rem;">&#9888;</div>
-                        <div style="color:#818cf8;font-size:1.2rem;font-weight:700;margin-top:8px;">
-                            Reclamation probable</div>
-                        <div style="color:rgba(224,224,255,0.6);font-size:0.9rem;margin-top:4px;">
-                            {'Probabilite : ' + f'{proba_val*100:.1f}%' if proba_val else ''}
+                        <div style="font-size:2rem;">⚠️</div>
+                        <div style="color:#ef4444;font-size:1.2rem;font-weight:700;margin-top:8px;">
+                            Risque Élevé : Réclamation Probable</div>
+                        <div style="color:rgba(224,224,255,0.8);font-size:0.95rem;margin-top:4px;">
+                            {'Probabilité estimée : ' + f'{proba_val*100:.1f}%' if proba_val else ''}
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -414,11 +414,11 @@ def show():
                     st.markdown(f"""
                     <div style="background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.35);
                                 border-radius:14px;padding:20px 24px;text-align:center;">
-                        <div style="font-size:2rem;">&#10003;</div>
+                        <div style="font-size:2rem;">✓</div>
                         <div style="color:#34d399;font-size:1.2rem;font-weight:700;margin-top:8px;">
-                            Pas de reclamation prevue</div>
-                        <div style="color:rgba(224,224,255,0.6);font-size:0.9rem;margin-top:4px;">
-                            {'Probabilite reclamation : ' + f'{proba_val*100:.1f}%' if proba_val else ''}
+                            Profil Favorable : Pas de Réclamation Prévue</div>
+                        <div style="color:rgba(224,224,255,0.8);font-size:0.95rem;margin-top:4px;">
+                            {'Probabilité de réclamation : ' + f'{proba_val*100:.1f}%' if proba_val else ''}
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
