@@ -44,7 +44,7 @@ def load_and_prep():
     y = df2[target_col].astype(int)
     return X, y
 
-@st.cache_data(show_spinner="Entrainement et evaluation de tous les modeles...")
+@st.cache_data(show_spinner="Entraînement et évaluation de tous les modèles...")
 def compare_all_models(test_size, random_state):
     X, y = load_and_prep()
     X_train, X_test, y_train, y_test = train_test_split(
@@ -57,8 +57,8 @@ def compare_all_models(test_size, random_state):
     models = {
         "Random Forest":        (RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42, n_jobs=-1), False),
         "XGBoost":              (XGBClassifier(n_estimators=200, max_depth=6, learning_rate=0.1, use_label_encoder=False, eval_metric="logloss", random_state=42, verbosity=0), False) if HAS_XGB else None,
-        "Regression Logistique":(LogisticRegression(C=1.0, max_iter=1000, random_state=42), True),
-        "Arbre de Decision":    (DecisionTreeClassifier(max_depth=8, random_state=42), False),
+        "Régression Logistique":(LogisticRegression(C=1.0, max_iter=1000, random_state=42), True),
+        "Arbre de Décision":    (DecisionTreeClassifier(max_depth=8, random_state=42), False),
     }
     if not HAS_XGB:
         del models["XGBoost"]
@@ -81,12 +81,12 @@ def compare_all_models(test_size, random_state):
         rec  = recall_score(y_test, y_pred)
 
         results.append({
-            "Modele": name,
+            "Modèle": name,
             "Accuracy": round(acc, 4),
             "AUC-ROC":  round(auc, 4),
             "F1-Score": round(f1, 4),
-            "Precision": round(prec, 4),
-            "Recall":   round(rec, 4),
+            "Précision": round(prec, 4),
+            "Rappel":   round(rec, 4),
         })
 
         fpr, tpr, _ = roc_curve(y_test, y_proba)
@@ -95,16 +95,16 @@ def compare_all_models(test_size, random_state):
     return pd.DataFrame(results).sort_values("AUC-ROC", ascending=False), roc_data
 
 def show():
-    st.markdown('<div style="color:#e0e0ff;font-size:1.8rem;font-weight:800;margin-bottom:6px;">Comparaison des Modeles</div>', unsafe_allow_html=True)
-    st.markdown('<div style="color:rgba(224,224,255,0.5);font-size:0.95rem;margin-bottom:28px;">Evaluez et comparez les performances de tous les modeles</div>', unsafe_allow_html=True)
+    st.markdown('<div style="color:#e0e0ff;font-size:1.8rem;font-weight:800;margin-bottom:6px;">Benchmark & Comparaison des Modèles</div>', unsafe_allow_html=True)
+    st.markdown('<div style="color:rgba(224,224,255,0.7);font-size:0.95rem;margin-bottom:28px;">Évaluez et comparez les performances de tous les modèles de Machine Learning</div>', unsafe_allow_html=True)
 
     with st.sidebar:
         st.markdown("---")
-        st.markdown('<p style="color:rgba(224,224,255,0.35);font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Parametres comparaison</p>', unsafe_allow_html=True)
-        test_size  = st.slider("Taille du test set (%)", 10, 40, 20, key="cmp_test") / 100
-        rand_state = st.number_input("Random state", 0, 999, 42, key="cmp_rand")
+        st.markdown('<p style="color:rgba(224,224,255,0.6);font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Paramètres de comparaison</p>', unsafe_allow_html=True)
+        test_size  = st.slider("Taille du jeu test (%)", 10, 40, 20, key="cmp_test") / 100
+        rand_state = st.number_input("Graine aléatoire (Random state)", 0, 999, 42, key="cmp_rand")
 
-    run = st.button("Comparer tous les modeles", key="compare_btn", type="primary")
+    run = st.button("🚀 Lancer le Benchmark des Modèles", key="compare_btn", type="primary")
 
     if run or "compare_results" in st.session_state:
         if run:
@@ -113,16 +113,16 @@ def show():
         else:
             results_df, roc_data = st.session_state.compare_results
 
-        best_model = results_df.iloc[0]["Modele"]
+        best_model = results_df.iloc[0]["Modèle"]
         best_auc   = results_df.iloc[0]["AUC-ROC"]
 
-        st.success(f"Meilleur modele : **{best_model}** (AUC = {best_auc:.4f})")
+        st.success(f"Meilleur modèle : **{best_model}** (AUC = {best_auc:.4f})")
 
         # ── Tableau recap ──────────────────────────────────────────────────
-        st.markdown('<div style="color:#e0e0ff;font-size:1.05rem;font-weight:700;margin:20px 0 12px 0;">Tableau des performances</div>', unsafe_allow_html=True)
+        st.markdown('<div style="color:#e0e0ff;font-size:1.05rem;font-weight:700;margin:20px 0 12px 0;">Tableau comparatif des performances</div>', unsafe_allow_html=True)
 
         def highlight_best(s):
-            if s.name in ["Accuracy","AUC-ROC","F1-Score","Precision","Recall"]:
+            if s.name in ["Accuracy","AUC-ROC","F1-Score","Précision","Rappel"]:
                 max_val = s.max()
                 return ["background: rgba(99,102,241,0.25); color:#818cf8; font-weight:700"
                         if v == max_val else "" for v in s]
@@ -132,8 +132,8 @@ def show():
             "Accuracy":  "{:.4f}",
             "AUC-ROC":  "{:.4f}",
             "F1-Score": "{:.4f}",
-            "Precision":"{:.4f}",
-            "Recall":   "{:.4f}",
+            "Précision":"{:.4f}",
+            "Rappel":   "{:.4f}",
         })
         st.dataframe(styled, use_container_width=True, hide_index=True)
 
@@ -168,19 +168,19 @@ def show():
                 use_container_width=True
             )
 
-        tab1, tab2, tab3 = st.tabs(["Comparaison des metriques", "Courbes ROC", "Classement visuel"])
+        tab1, tab2, tab3 = st.tabs(["Comparaison des métriques", "Courbes ROC", "Classement visuel"])
 
         with tab1:
-            metrics = ["Accuracy","AUC-ROC","F1-Score","Precision","Recall"]
-            metric_sel = st.multiselect("Metriques a afficher", metrics, default=metrics, key="metric_sel")
+            metrics = ["Accuracy","AUC-ROC","F1-Score","Précision","Rappel"]
+            metric_sel = st.multiselect("Métriques à afficher", metrics, default=metrics, key="metric_sel")
 
             if metric_sel:
-                df_melt = results_df.melt(id_vars="Modele", value_vars=metric_sel,
-                                           var_name="Metrique", value_name="Score")
-                fig_bar = px.bar(df_melt, x="Modele", y="Score", color="Metrique",
+                df_melt = results_df.melt(id_vars="Modèle", value_vars=metric_sel,
+                                           var_name="Métrique", value_name="Score")
+                fig_bar = px.bar(df_melt, x="Modèle", y="Score", color="Métrique",
                                   barmode="group", text_auto=".3f",
                                   color_discrete_sequence=["#818cf8","#c084fc","#38bdf8","#34d399","#fb923c"],
-                                  title="Comparaison des metriques par modele")
+                                  title="Comparaison des métriques par modèle")
                 fig_bar.update_layout(**PLOTLY_LAYOUT, title_font_color="#e0e0ff",
                                        legend=dict(font=dict(color="#c4c4e0")),
                                        yaxis_range=[0, 1.05])
@@ -203,7 +203,7 @@ def show():
                         r=vals_closed,
                         theta=cats_closed,
                         fill="toself",
-                        name=row["Modele"],
+                        name=row["Modèle"],
                         line=dict(color=cfg["line"], width=2),
                         fillcolor=cfg["fill"],
                         opacity=0.85,
@@ -226,7 +226,7 @@ def show():
         with tab2:
             fig_roc = go.Figure()
             colors_roc = {"Random Forest":"#818cf8","XGBoost":"#c084fc",
-                          "Regression Logistique":"#38bdf8","Arbre de Decision":"#34d399"}
+                          "Régression Logistique":"#38bdf8","Arbre de Décision":"#34d399"}
             for name, (fpr, tpr, auc) in roc_data.items():
                 fig_roc.add_trace(go.Scatter(
                     x=fpr, y=tpr, mode="lines",
@@ -236,7 +236,7 @@ def show():
             fig_roc.add_trace(go.Scatter(
                 x=[0,1], y=[0,1], mode="lines",
                 line=dict(color="rgba(255,255,255,0.25)", dash="dash"),
-                name="Aleatoire",
+                name="Aléatoire",
             ))
             fig_roc.update_layout(**PLOTLY_LAYOUT,
                                    title="Courbes ROC - Comparaison",
