@@ -16,21 +16,30 @@ html, body, [class*="css"] {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     color: #0f172a;
 }
+
+/* ── Fond Ambiance Moderne & Élégant (Nuances Perle, Indigo Doux & Ardoise) ── */
 .stApp {
-    background-color: #f8fafc;
+    background-color: #f1f5f9;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 48%),
+        radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.10) 0px, transparent 44%),
+        radial-gradient(at 50% 50%, rgba(248, 250, 252, 0.7) 0px, transparent 100%),
+        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.08) 0px, transparent 45%),
+        radial-gradient(at 0% 100%, rgba(238, 242, 255, 0.6) 0px, transparent 50%);
+    background-attachment: fixed;
     color: #0f172a;
     min-height: 100vh;
 }
 
-/* ── Barre Latérale Élégante (Fond Blanc / Gris très clair) ── */
+/* ── Barre Latérale Élégante (Effet Blanc Délicat avec Bordure Fine) ── */
 [data-testid="stSidebar"] {
-    background-color: #ffffff !important;
-    border-right: 1px solid #e2e8f0 !important;
-    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.02);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+    border-right: 1px solid rgba(226, 232, 240, 0.9) !important;
+    box-shadow: 4px 0 20px rgba(15, 23, 42, 0.03);
 }
 [data-testid="stSidebar"] hr {
     margin: 14px 0 !important;
-    border-color: #f1f5f9 !important;
+    border-color: #edf2f7 !important;
 }
 
 /* ── Boutons d'Action & Navigation ── */
@@ -46,25 +55,25 @@ html, body, [class*="css"] {
     background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
     color: #ffffff !important;
     border: 1px solid #4338ca !important;
-    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.22) !important;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25) !important;
 }
 .stButton > button[kind="primary"]:hover {
     background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%) !important;
-    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.32) !important;
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35) !important;
     transform: translateY(-1.5px);
 }
 .stButton > button[kind="secondary"] {
     background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    color: #334155 !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.03) !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #1e293b !important;
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04) !important;
 }
 .stButton > button[kind="secondary"]:hover {
     background: #f8fafc !important;
-    border-color: #cbd5e1 !important;
+    border-color: #94a3b8 !important;
     color: #0f172a !important;
     transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.06) !important;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.07) !important;
 }
 
 /* ── Onglets Modernes ── */
@@ -72,9 +81,9 @@ html, body, [class*="css"] {
     gap: 8px;
     background: #ffffff;
     border-radius: 12px;
-    padding: 5px;
+    padding: 6px;
     border: 1px solid #e2e8f0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 .stTabs [data-baseweb="tab"] {
     background: transparent;
@@ -99,12 +108,12 @@ html, body, [class*="css"] {
     border: 1px solid #e2e8f0;
     padding: 16px 20px;
     border-radius: 14px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 [data-testid="stMetric"]:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
     border-color: #cbd5e1;
 }
 [data-testid="stMetricValue"] {
@@ -149,7 +158,7 @@ html, body, [class*="css"] {
     border-radius: 12px; 
     overflow: hidden; 
     border: 1px solid #e2e8f0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
 }
 
 hr { border-color: #e2e8f0 !important; }
@@ -176,7 +185,7 @@ def show_sidebar_info():
             <div style="font-size:1.6rem; background:#eef2ff; border:1px solid #c7d2fe; border-radius:10px; width:40px; height:40px; display:flex; align-items:center; justify-content:center;">🚗</div>
             <div>
                 <div style="font-size:1.05rem; font-weight:800; color:#0f172a; letter-spacing:-0.3px;">AutoAssure</div>
-                <div style="font-size:0.72rem; color:#6366f1; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Guide & Aide Décisionnelle</div>
+                <div style="font-size:0.72rem; color:#4f46e5; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Guide & Aide Décisionnelle</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -188,7 +197,7 @@ def show_sidebar_info():
             rate = round((n_claims / max(len(df), 1)) * 100, 1)
 
             st.markdown(f"""
-            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px; margin-bottom:16px;">
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
                 <div style="color:#64748b; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Portefeuille Actif</div>
                 <div style="color:#0f172a; font-weight:700; font-size:0.82rem; margin-top:2px;">{st.session_state.data_source}</div>
                 <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:0.75rem; color:#475569; border-top:1px solid #edf2f7; padding-top:5px;">
@@ -204,15 +213,15 @@ def show_sidebar_info():
             **Comment exploiter la plateforme :**
             
             1. **🏠 Accueil & Synthèse**  
-               Vue macroscopique du portefeuille, objectifs stratégiques et volumétrie globale.
+               Vue macroscopique du portefeuille, contexte métier et volumétrie globale.
             2. **🔍 Exploration des Données**  
-               Audit de complétude (valeurs manquantes), cardinalités et statistiques descriptives univariées.
+               Audit de complétude (valeurs manquantes), types et distributions univariées.
             3. **📊 Dashboard Analytique**  
-               Analyses croisées avec la variable cible (`OUTCOME`), matrice de corrélation de Pearson et cartographie des départements.
+               Analyses croisées avec la variable cible (`OUTCOME`), corrélations et carte géographique.
             4. **⚙️ Modélisation Machine Learning**  
-               Entraînement pas-à-pas, matrice de confusion, courbe ROC, importance des facteurs et simulateur individuel de risque.
+               Entraînement pas-à-pas, réglage d'hyperparamètres, importance des variables et simulateur de risque.
             5. **⚖️ Benchmark des Modèles**  
-               Comparatif côte-à-côte (AUC, F1, Précision, Rappel), radar décisionnel et sélection du modèle champion.
+               Comparatif des performances (AUC, F1, Précision, Rappel), radar visuel et sélection du modèle champion.
             """)
 
         # ── 2. Comparatif pédagogique des modèles ──
@@ -222,7 +231,7 @@ def show_sidebar_info():
                 <b style="color:#4f46e5;">🌲 Random Forest (Forêt Aléatoire)</b><br>
                 <span style="color:#475569; font-size:0.78rem;">
                 <b>Principe :</b> Agrégation (bagging) de centaines d'arbres de décision décorrélés.<br>
-                <b>Points forts :</b> Très robuste face au surapprentissage, gère naturellement les relations non-linéaires complexes.<br>
+                <b>Points forts :</b> Très robuste face au surapprentissage, gère les interactions non-linéaires complexes.<br>
                 <b>Idéal pour :</b> Modèle de référence équilibré et stable.
                 </span>
             </div>
@@ -230,27 +239,27 @@ def show_sidebar_info():
             <div style="margin-bottom:10px; border-top:1px solid #f1f5f9; padding-top:8px;">
                 <b style="color:#7c3aed;">⚡ XGBoost (Gradient Boosting)</b><br>
                 <span style="color:#475569; font-size:0.78rem;">
-                <b>Principe :</b> Construction séquentielle d'arbres corrigeant chacun les erreurs résiduelles des précédents.<br>
-                <b>Points forts :</b> Pouvoir de discrimination maximal, rapidité de convergence.<br>
-                <b>Idéal pour :</b> Scoring actuariel fin où chaque dixième de point d'AUC compte.
+                <b>Principe :</b> Construction séquentielle d'arbres optimisant les erreurs résiduelles.<br>
+                <b>Points forts :</b> Pouvoir discriminant maximal sur données tabulaires.<br>
+                <b>Idéal pour :</b> Scoring précis pour la tarification technique.
                 </span>
             </div>
             
             <div style="margin-bottom:10px; border-top:1px solid #f1f5f9; padding-top:8px;">
                 <b style="color:#2563eb;">📈 Régression Logistique</b><br>
                 <span style="color:#475569; font-size:0.78rem;">
-                <b>Principe :</b> Modélisation linéaire probabiliste de la log-odds de sinistre.<br>
-                <b>Points forts :</b> Interprétabilité totale grâce aux coefficients (odds ratios), très rapide à déployer.<br>
-                <b>Idéal pour :</b> Grilles tarifaires réglementées et transparence actuarielle.
+                <b>Principe :</b> Modélisation linéaire probabiliste avec normalisation StandardScaler.<br>
+                <b>Points forts :</b> Interprétabilité directe grâce aux coefficients (odds ratios).<br>
+                <b>Idéal pour :</b> Grilles tarifaires traditionnelles et explicabilité totale.
                 </span>
             </div>
             
             <div style="border-top:1px solid #f1f5f9; padding-top:8px;">
                 <b style="color:#0891b2;">🌳 Arbre de Décision (CART)</b><br>
                 <span style="color:#475569; font-size:0.78rem;">
-                <b>Principe :</b> Segmentation séquentielle de l'échantillon par seuils optimaux.<br>
-                <b>Points forts :</b> Règles d'arbitrage visuelles et compréhensibles par les souscripteurs.<br>
-                <b>Idéal pour :</b> Règles d'acceptation automatique de dossiers.
+                <b>Principe :</b> Découpage séquentiel de la population par seuils optimaux.<br>
+                <b>Points forts :</b> Règles d'arbitrage transparentes et intuitives.<br>
+                <b>Idéal pour :</b> Règles d'acceptation de souscription.
                 </span>
             </div>
             """, unsafe_allow_html=True)
@@ -259,29 +268,21 @@ def show_sidebar_info():
         with st.expander("🎯 Lexique des Métriques Actuarielles", expanded=False):
             st.markdown("""
             - **AUC-ROC (0.5 à 1.0) :**  
-              Probabilité que le modèle classe un assuré sinistré au-dessus d'un non-sinistré. *Objectif > 0.85.*
+              Capacité du modèle à bien classer un assuré sinistré au-dessus d'un non-sinistré. *Objectif > 0.85.*
             - **Rappel / Recall (Exhaustivité) :**  
-              Pourcentage des vrais sinistres détectés par le modèle. Essentiel pour éviter les sinistres non-provisionnés.
+              Proportion des sinistres réels correctement capturés par le modèle. Crucial pour limiter les pertes imprévues.
             - **Précision (Fiabilité) :**  
-              Pourcentage de sinistres réels parmi ceux prédits à risque. Évite de pénaliser injustement de bons conducteurs.
+              Proportion de sinistres réels parmi ceux signalés à risque. Évite de pénaliser des assurés sains.
             - **F1-Score :**  
-              Moyenne harmonique entre Précision et Rappel. Mesure le compromis optimal.
+              Compromis harmonique entre Précision et Rappel.
             - **Accuracy :**  
-              Taux global de bonnes prédictions sur l'ensemble de la population.
-            """)
-
-        # ── 4. Cadre Réglementaire & Sécurité ──
-        with st.expander("🛡️ Gouvernance & Solvabilité II", expanded=False):
-            st.markdown("""
-            - **Auditabilité :** Tous les calculs reposent sur des graines aléatoires reproductibles (*Random State*).
-            - **Exportabilité :** Export direct des modèles sérialisés (`.joblib`), métriques (`.xlsx`) et synthèses (`.pdf`).
-            - **Drift temporel :** Recommandation de ré-étalonnage semestriel des poids d'arbres.
+              Pourcentage global de prédictions exactes sur l'ensemble de la population.
             """)
 
         st.markdown("""
-        <div style="margin-top:24px; padding-top:14px; border-top:1px solid #f1f5f9; text-align:center; font-size:0.72rem; color:#94a3b8;">
+        <div style="margin-top:28px; padding-top:14px; border-top:1px solid #f1f5f9; text-align:center; font-size:0.72rem; color:#94a3b8;">
             AutoAssure Analytics · Modélisation Prédictive<br>
-            Version 2.4 Pro · Fond Blanc Light
+            Version 2.4 Pro
         </div>
         """, unsafe_allow_html=True)
 
@@ -308,7 +309,7 @@ def show_landing():
     with col_c:
         st.markdown("""
         <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:20px;
-                    padding:32px 30px; box-shadow:0 10px 30px rgba(0,0,0,0.05); margin-bottom:20px;">
+                    padding:32px 30px; box-shadow:0 10px 30px rgba(15,23,42,0.06); margin-bottom:20px;">
             <div style="color:#0f172a; font-size:1.15rem; font-weight:700; margin-bottom:6px; text-align:center;">
                 📂 Importer une base de données
             </div>
@@ -357,22 +358,22 @@ def show_landing():
 
         st.markdown("""
         <div style="margin-top:36px; display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:18px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.02);">
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:18px; text-align:center; box-shadow:0 2px 8px rgba(15,23,42,0.03);">
                 <div style="font-size:1.8rem; margin-bottom:6px;">📊</div>
                 <div style="color:#0f172a; font-weight:700; font-size:0.9rem;">Tableau de Bord Analytique</div>
                 <div style="color:#64748b; font-size:0.78rem; margin-top:3px;">Explorations univariées & bivariées</div>
             </div>
-            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:18px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.02);">
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:18px; text-align:center; box-shadow:0 2px 8px rgba(15,23,42,0.03);">
                 <div style="font-size:1.8rem; margin-bottom:6px;">🤖</div>
                 <div style="color:#0f172a; font-weight:700; font-size:0.9rem;">Machine Learning</div>
                 <div style="color:#64748b; font-size:0.78rem; margin-top:3px;">Random Forest, XGBoost, LR, DT</div>
             </div>
-            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:18px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.02);">
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:18px; text-align:center; box-shadow:0 2px 8px rgba(15,23,42,0.03);">
                 <div style="font-size:1.8rem; margin-bottom:6px;">🗺️</div>
                 <div style="color:#0f172a; font-weight:700; font-size:0.9rem;">Répartition Territoriale</div>
                 <div style="color:#64748b; font-size:0.78rem; margin-top:3px;">Analyse cartographique par département</div>
             </div>
-            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:18px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.02);">
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:18px; text-align:center; box-shadow:0 2px 8px rgba(15,23,42,0.03);">
                 <div style="font-size:1.8rem; margin-bottom:6px;">📄</div>
                 <div style="color:#0f172a; font-weight:700; font-size:0.9rem;">Rapport d'Audit PDF</div>
                 <div style="color:#64748b; font-size:0.78rem; margin-top:3px;">Génération complète pour actuaires</div>
@@ -396,7 +397,7 @@ def show_top_header():
     with col_brand:
         st.markdown("""
         <div style="display:flex; align-items:center; gap:12px; padding:4px 0;">
-            <div style="font-size:2rem; background:#eef2ff; border:1px solid #c7d2fe; border-radius:12px; width:48px; height:48px; display:flex; align-items:center; justify-content:center;">🚗</div>
+            <div style="font-size:2rem; background:#eef2ff; border:1px solid #c7d2fe; border-radius:12px; width:48px; height:48px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(79,70,229,0.12);">🚗</div>
             <div>
                 <div style="font-size:1.25rem; font-weight:800; color:#1e1b4b; letter-spacing:-0.5px;">AutoAssure Analytics</div>
                 <div style="font-size:0.75rem; color:#64748b; font-weight:500;">Prise de Décision & Modélisation Machine Learning</div>
@@ -406,7 +407,7 @@ def show_top_header():
 
     with col_info:
         st.markdown(f"""
-        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:8px 16px; display:inline-block; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:8px 16px; display:inline-block; box-shadow:0 2px 6px rgba(15,23,42,0.03);">
             <div style="font-size:0.75rem; color:#475569;"><b>Source :</b> {st.session_state.data_source}</div>
             <div style="font-size:0.72rem; color:#64748b; margin-top:2px;">
                 <b style="color:#4f46e5;">{len(df):,}</b> assurés · <b style="color:#4f46e5;">{len(df.columns)}</b> variables · Sinistralité : <b style="color:#dc2626;">{rate}%</b>
