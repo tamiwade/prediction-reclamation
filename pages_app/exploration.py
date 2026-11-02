@@ -8,13 +8,13 @@ from utils_export import export_to_excel
 def load_data():
     return pd.read_csv("Car_Insurance_Claim-2.csv")
 
-def card(title, value, color="#c084fc"):
+def card(title, value, color="#4f46e5"):
     st.markdown(f"""
-    <div style="background:rgba(26,20,50,0.65);border:1px solid rgba(139,92,246,0.22);
-                border-radius:14px;padding:18px 20px;margin-bottom:12px;box-shadow:0 4px 18px rgba(0,0,0,0.2);">
-        <div style="color:#a78bfa;font-size:0.75rem;text-transform:uppercase;
-                    letter-spacing:0.08em;font-weight:700;">{title}</div>
-        <div style="color:{color};font-size:1.45rem;font-weight:800;margin-top:4px;">{value}</div>
+    <div style="background:#ffffff; border:1px solid #e2e8f0;
+                border-radius:14px; padding:18px 20px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
+        <div style="color:#64748b; font-size:0.75rem; text-transform:uppercase;
+                    letter-spacing:0.08em; font-weight:700;">{title}</div>
+        <div style="color:{color}; font-size:1.45rem; font-weight:800; margin-top:4px;">{value}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -28,8 +28,8 @@ def show():
             st.error("Aucune donnée disponible. Veuillez charger un fichier.")
             return
 
-    st.markdown('<div style="color:#fdf4ff;font-size:1.85rem;font-weight:800;margin-bottom:4px;letter-spacing:-0.5px;">Audit & Exploration des Données</div>', unsafe_allow_html=True)
-    st.markdown('<div style="color:#c4b5fd;font-size:0.95rem;margin-bottom:24px;">Aperçu interactif, contrôle de complétude et diagnostic structurel des variables</div>', unsafe_allow_html=True)
+    st.markdown('<div style="color:#0f172a; font-size:1.75rem; font-weight:800; margin-bottom:4px; letter-spacing:-0.5px;">Audit & Exploration des Données</div>', unsafe_allow_html=True)
+    st.markdown('<div style="color:#64748b; font-size:0.95rem; margin-bottom:20px;">Aperçu interactif, contrôle de complétude et diagnostic structurel des variables</div>', unsafe_allow_html=True)
 
     tab1, tab2, tab3 = st.tabs(["Aperçu du portefeuille", "Contrôle de qualité des données", "Diagnostic structurel des variables"])
 
@@ -53,7 +53,7 @@ def show():
                 use_container_width=True
             )
 
-        st.markdown("---")
+        st.markdown("<div style='height:12px;'></div>", unsafe_allow_html=True)
         col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.metric("Assurés sous revue", f"{len(df):,}")
@@ -65,7 +65,7 @@ def show():
             st.metric("Variables catégoriques", f"{df.select_dtypes(include='object').shape[1]}")
 
     with tab2:
-        st.markdown('<div style="color:#e0e0ff;font-weight:700;font-size:1rem;margin-bottom:16px;">Contrôle de complétude : Valeurs manquantes par variable</div>', unsafe_allow_html=True)
+        st.markdown('<div style="color:#0f172a; font-weight:700; font-size:1rem; margin-bottom:14px;">Contrôle de complétude : Valeurs manquantes par variable</div>', unsafe_allow_html=True)
 
         missing = df.isnull().sum().reset_index()
         missing.columns = ["Variable", "Manquants"]
@@ -79,7 +79,7 @@ def show():
             st.dataframe(missing, use_container_width=True, hide_index=True)
 
         st.markdown("---")
-        st.markdown('<div style="color:#e0e0ff;font-weight:700;font-size:1rem;margin-bottom:16px;">Statistiques descriptives des variables numériques</div>', unsafe_allow_html=True)
+        st.markdown('<div style="color:#0f172a; font-weight:700; font-size:1rem; margin-bottom:14px;">Statistiques descriptives des variables numériques</div>', unsafe_allow_html=True)
 
         num_cols = df.select_dtypes(include="number").columns.tolist()
         if "ID" in num_cols:
@@ -88,7 +88,7 @@ def show():
         st.dataframe(df[num_cols].describe().round(4), use_container_width=True)
 
     with tab3:
-        st.markdown('<div style="color:#e0e0ff;font-weight:700;font-size:1rem;margin-bottom:16px;">Schéma des données & Cardinalité des variables</div>', unsafe_allow_html=True)
+        st.markdown('<div style="color:#0f172a; font-weight:700; font-size:1rem; margin-bottom:14px;">Schéma des données & Cardinalité des variables</div>', unsafe_allow_html=True)
 
         info_df = pd.DataFrame({
             "Variable": df.columns,
@@ -101,7 +101,7 @@ def show():
         st.dataframe(info_df, use_container_width=True, hide_index=True, height=450)
 
         st.markdown("---")
-        st.markdown('<div style="color:#e0e0ff;font-weight:700;font-size:1rem;margin-bottom:12px;">Distribution des modalités catégorielles</div>', unsafe_allow_html=True)
+        st.markdown('<div style="color:#0f172a; font-weight:700; font-size:1rem; margin-bottom:12px;">Distribution des modalités catégorielles</div>', unsafe_allow_html=True)
 
         cat_cols = df.select_dtypes(include="object").columns.tolist()
         if cat_cols:
@@ -112,4 +112,3 @@ def show():
             st.dataframe(vc, use_container_width=True, hide_index=True)
         else:
             st.info("Aucune variable catégorielle dans ce jeu de données.")
-
