@@ -1,4 +1,4 @@
-﻿import streamlit as st
+import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -30,20 +30,19 @@ def pch(fig):
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 def stitle(title, sub=""):
-    sub_html = "<p style='color:#a78bfa;font-size:0.8rem;margin:3px 0 0 0;'>" + sub + "</p>" if sub else ""
+    sub_html = f"<p style='color:#a78bfa;font-size:0.8rem;margin:3px 0 0 0;'>{sub}</p>" if sub else ""
     st.markdown(
-        "<div style='margin:22px 0 14px 0;padding-bottom:8px;border-bottom:1px solid rgba(139,92,246,0.2);'>"
-        "<span style='color:#f5d0fe;font-size:1.1rem;font-weight:700;'>" + title + "</span>"
-        + sub_html + "</div>",
+        f"<div style='margin:22px 0 14px 0;padding-bottom:8px;border-bottom:1px solid rgba(139,92,246,0.2);'>"
+        f"<span style='color:#f5d0fe;font-size:1.1rem;font-weight:700;'>{title}</span>"
+        f"{sub_html}</div>",
         unsafe_allow_html=True
     )
 
 def show():
     df = st.session_state.get("df", None)
     if df is None:
-        st.error("Aucune donnee chargee. Veuillez charger un fichier depuis la page d'accueil.")
+        st.error("Aucune donnée chargée. Veuillez charger un fichier depuis la page d'accueil.")
         return
-
 
     target_col = "OUTCOME" if "OUTCOME" in df.columns else df.columns[-1]
     all_vars = [c for c in df.columns if c not in ["ID", target_col]]
@@ -51,9 +50,9 @@ def show():
     st.markdown(
         "<div style='margin-bottom:24px;'>"
         "<div style='color:#fdf4ff;font-size:1.85rem;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;'>"
-        "ðŸ“Š Dashboard Analytique & Ã‰tudes Statistiques</div>"
+        "📊 Dashboard Analytique & Études Statistiques</div>"
         "<div style='color:#a78bfa;font-size:0.92rem;'>"
-        "SÃ©lectionnez une variable pour afficher son tableau de bord d'analyse multidimensionnel</div></div>",
+        "Sélectionnez une variable pour afficher son tableau de bord d'analyse multidimensionnel</div></div>",
         unsafe_allow_html=True
     )
 
@@ -61,7 +60,7 @@ def show():
         "<div style='background:linear-gradient(135deg,rgba(124,58,237,0.18),rgba(168,85,247,0.1));"
         "border:1px solid rgba(139,92,246,0.35);border-radius:16px;padding:20px 24px;margin-bottom:22px;'>"
         "<div style='color:#c084fc;font-size:0.78rem;font-weight:700;text-transform:uppercase;"
-        "letter-spacing:0.1em;margin-bottom:12px;'>ðŸŽ¯ SÃ©lection de la Variable d'Ã‰tude</div></div>",
+        "letter-spacing:0.1em;margin-bottom:12px;'>🎯 Sélection de la Variable d'Étude</div></div>",
         unsafe_allow_html=True
     )
 
@@ -69,15 +68,15 @@ def show():
     with col_sel1:
         chosen_var = st.selectbox("Variable", options=all_vars, key="dash_chosen_var")
     with col_sel2:
-        show_target = st.checkbox("Croiser avec la cible", value=True, key="dash_show_target")
+        show_target = st.checkbox("Croiser avec la variable cible", value=True, key="dash_show_target")
 
     var_is_numeric = pd.api.types.is_numeric_dtype(df[chosen_var])
     df_clean = df[[chosen_var, target_col]].dropna().copy()
     df_clean["Classe"] = df_clean[target_col].apply(
-        lambda x: f"RÃ©clamation ({target_col}=1)" if x == 1 else f"Sans rÃ©clamation ({target_col}=0)"
+        lambda x: f"Réclamation ({target_col}=1)" if x == 1 else f"Sans réclamation ({target_col}=0)"
     )
 
-    stitle("Indicateurs ClÃ©s de Risque", f"Variable : {chosen_var}")
+    stitle("Indicateurs Clés de Risque", f"Variable : {chosen_var}")
     k1, k2, k3, k4, k5 = st.columns(5)
     with k1:
         st.metric("Effectif total", f"{df[chosen_var].count():,}", f"{df[chosen_var].isnull().sum()} manquants")
@@ -85,29 +84,29 @@ def show():
         st.metric("Valeurs uniques", f"{df[chosen_var].nunique():,}")
     with k3:
         if var_is_numeric:
-            st.metric("Moyenne", f"{df[chosen_var].mean():.2f}", f"MÃ©d: {df[chosen_var].median():.2f}")
+            st.metric("Moyenne", f"{df[chosen_var].mean():.2f}", f"Médiane: {df[chosen_var].median():.2f}")
         else:
             top_v = df[chosen_var].value_counts().index[0] if len(df[chosen_var].dropna()) > 0 else "N/A"
             st.metric("Mode", str(top_v))
     with k4:
         if var_is_numeric:
-            st.metric("Ã‰cart-type", f"{df[chosen_var].std():.2f}",
+            st.metric("Écart-type", f"{df[chosen_var].std():.2f}",
                       f"{df[chosen_var].min():.1f} - {df[chosen_var].max():.1f}")
         else:
             pct_top = df[chosen_var].value_counts(normalize=True).iloc[0] * 100 if len(df[chosen_var].dropna()) > 0 else 0
-            st.metric("FrÃ©q. mode", f"{pct_top:.1f}%")
+            st.metric("Fréq. mode", f"{pct_top:.1f}%")
     with k5:
         if var_is_numeric:
             corr_v = df[[chosen_var, target_col]].dropna().corr().iloc[0, 1]
-            st.metric("CorrÃ©lation cible", f"{corr_v:.3f}")
+            st.metric("Corrélation cible", f"{corr_v:.3f}")
         else:
             tg = df.groupby(chosen_var)[target_col].mean()
-            st.metric("Taux max rÃ©cl.", f"{tg.max() * 100:.1f}%" if len(tg) > 0 else "N/A")
+            st.metric("Taux max récl.", f"{tg.max() * 100:.1f}%" if len(tg) > 0 else "N/A")
 
     st.markdown("<br>", unsafe_allow_html=True)
 
     if var_is_numeric:
-        stitle("Analyse UnivariÃ©e de la Variable NumÃ©rique", chosen_var)
+        stitle("Analyse Univariée de la Variable Numérique", chosen_var)
         r1c1, r1c2 = st.columns(2)
         with r1c1:
             fig = px.histogram(df_clean, x=chosen_var,
@@ -121,7 +120,7 @@ def show():
             fig2 = px.box(df_clean, x="Classe" if show_target else None, y=chosen_var,
                           color="Classe" if show_target else None,
                           color_discrete_sequence=VIO, points="outliers",
-                          title=f"Boite a moustaches - {chosen_var}")
+                          title=f"Boîte à moustaches - {chosen_var}")
             fig2.update_layout(**PL, title_font_color="#f5d0fe", showlegend=False)
             pch(fig2)
 
@@ -137,12 +136,12 @@ def show():
             fig4 = px.ecdf(df_clean, x=chosen_var,
                            color="Classe" if show_target else None,
                            color_discrete_sequence=VIO,
-                           title=f"Distribution cumulee (ECDF) - {chosen_var}")
+                           title=f"Distribution cumulée (ECDF) - {chosen_var}")
             fig4.update_layout(**PL, title_font_color="#f5d0fe", legend=dict(font=dict(color="#c4b5fd")))
             pch(fig4)
 
         if show_target:
-            stitle("Segmentation & Taux de SinistralitÃ© par Tranches", f"FrÃ©quence selon {chosen_var}")
+            stitle("Segmentation & Taux de Sinistralité par Tranches", f"Fréquence selon {chosen_var}")
             n_bins = st.slider("Nombre de tranches d'analyse", 3, 20, 8, key="dash_nbins")
             df_binned = df[[chosen_var, target_col]].dropna().copy()
             df_binned["Tranche"] = pd.cut(df_binned[chosen_var], bins=n_bins)
@@ -165,7 +164,7 @@ def show():
                 fig_t2 = px.bar(tranche_stats, x="Tranche", y="Taux_pct",
                                 color="Taux_pct",
                                 color_continuous_scale=["#302b63", "#f59e0b", "#ef4444"],
-                                title=f"Taux de rÃ©clamation (%) par tranche - {chosen_var}",
+                                title=f"Taux de réclamation (%) par tranche - {chosen_var}",
                                 text="Taux_pct")
                 fig_t2.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
                 fig_t2.update_layout(**PL, title_font_color="#f5d0fe",
@@ -179,8 +178,8 @@ def show():
         if show_target:
             s0 = df[df[target_col] == 0][chosen_var].describe().reset_index()
             s1 = df[df[target_col] == 1][chosen_var].describe().reset_index()
-            s0.columns = ["Statistique", "Classe 0 (Sans rÃ©cl.)"]
-            s1.columns = ["Statistique", "Classe 1 (Avec rÃ©cl.)"]
+            s0.columns = ["Statistique", "Classe 0 (Sans récl.)"]
+            s1.columns = ["Statistique", "Classe 1 (Avec récl.)"]
             merged = stats_df.merge(s0, on="Statistique").merge(s1, on="Statistique")
             merged.iloc[:, 1:] = merged.iloc[:, 1:].round(4)
             st.dataframe(merged, use_container_width=True, hide_index=True)
@@ -188,7 +187,7 @@ def show():
             st.dataframe(stats_df, use_container_width=True, hide_index=True)
 
     else:
-        stitle("RÃ©partition & FrÃ©quence de la Variable CatÃ©gorielle", chosen_var)
+        stitle("Répartition & Fréquence de la Variable Catégorielle", chosen_var)
         vc = df[chosen_var].value_counts().reset_index()
         vc.columns = [chosen_var, "Effectif"]
         vc["Proportion (%)"] = (vc["Effectif"] / len(df) * 100).round(2)
@@ -206,7 +205,7 @@ def show():
         with r1c2:
             fig_p = px.pie(vc, names=chosen_var, values="Effectif",
                            color_discrete_sequence=VIO, hole=0.5,
-                           title=f"Repartition - {chosen_var}")
+                           title=f"Répartition - {chosen_var}")
             fig_p.update_traces(textposition="outside", textfont_size=12,
                                 marker=dict(line=dict(color="rgba(0,0,0,0.3)", width=2)))
             fig_p.update_layout(**PL, title_font_color="#f5d0fe",
@@ -214,17 +213,17 @@ def show():
             pch(fig_p)
 
         if show_target:
-            stitle("Analyse BivariÃ©e vs Variable Cible", f"{chosen_var} Ã— {target_col}")
+            stitle("Analyse Bivariée vs Variable Cible", f"{chosen_var} × {target_col}")
             r2c1, r2c2 = st.columns(2)
             with r2c1:
                 pivot = df.groupby([chosen_var, target_col]).size().reset_index(name="n")
                 pivot["Classe"] = pivot[target_col].apply(
-                    lambda x: f"{target_col}=1 (RÃ©clamation)" if x == 1 else f"{target_col}=0 (Sans rÃ©clamation)"
+                    lambda x: f"{target_col}=1 (Réclamation)" if x == 1 else f"{target_col}=0 (Sans réclamation)"
                 )
                 fig_gb = px.bar(pivot, x=chosen_var, y="n", color="Classe",
                                 barmode="group", text="n",
                                 color_discrete_sequence=["#34d399", "#818cf8"],
-                                title=f"{chosen_var} croisÃ© avec {target_col}")
+                                title=f"{chosen_var} croisé avec {target_col}")
                 fig_gb.update_traces(texttemplate="%{text:,}", textposition="outside")
                 fig_gb.update_layout(**PL, title_font_color="#f5d0fe",
                                      legend=dict(font=dict(color="#c4b5fd")), xaxis_tickangle=-20)
@@ -236,7 +235,7 @@ def show():
                 taux = taux.sort_values("Taux (%)", ascending=False)
                 fig_t = px.bar(taux, x=chosen_var, y="Taux (%)", color="Taux (%)",
                                color_continuous_scale=["#302b63", "#f59e0b", "#ef4444"],
-                               text="Taux (%)", title=f"Taux de rÃ©clamation (%) par {chosen_var}")
+                               text="Taux (%)", title=f"Taux de réclamation (%) par {chosen_var}")
                 fig_t.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
                 fig_t.update_layout(**PL, title_font_color="#f5d0fe",
                                     coloraxis_showscale=False, xaxis_tickangle=-20)
@@ -246,14 +245,14 @@ def show():
             with r3c1:
                 pct_df = df.groupby([chosen_var, target_col]).size().reset_index(name="n")
                 pct_df["Classe"] = pct_df[target_col].apply(
-                    lambda x: "RÃ©clamation" if x == 1 else "Sans rÃ©clamation"
+                    lambda x: "Réclamation" if x == 1 else "Sans réclamation"
                 )
                 tot = pct_df.groupby(chosen_var)["n"].transform("sum")
                 pct_df["Pct"] = (pct_df["n"] / tot * 100).round(1)
                 fig_stk = px.bar(pct_df, x=chosen_var, y="Pct", color="Classe",
                                  barmode="stack", text="Pct",
                                  color_discrete_sequence=["#34d399", "#818cf8"],
-                                 title=f"RÃ©partition normalisÃ©e 100% - {chosen_var}")
+                                 title=f"Répartition normalisée 100% - {chosen_var}")
                 fig_stk.update_traces(texttemplate="%{text:.0f}%", textposition="inside")
                 fig_stk.update_layout(**PL, title_font_color="#f5d0fe",
                                       legend=dict(font=dict(color="#c4b5fd")), xaxis_tickangle=-20)
@@ -263,26 +262,26 @@ def show():
                 fig_tm = px.treemap(tc_df, path=[chosen_var, "Classe"], values="n",
                                     color="n",
                                     color_continuous_scale=["#302b63", "#818cf8", "#c084fc"],
-                                    title=f"Treemap hiÃ©rarchique : {chosen_var} Ã— Classe")
+                                    title=f"Treemap hiérarchique : {chosen_var} × Classe")
                 fig_tm.update_layout(**PL, title_font_color="#f5d0fe", coloraxis_showscale=False)
                 pch(fig_tm)
 
-        stitle("Tableau RÃ©capitulatif DÃ©taillÃ© des ModalitÃ©s")
+        stitle("Tableau Récapitulatif Détaillé des Modalités")
         if show_target:
             t2 = df.groupby(chosen_var)[target_col].agg(["count", "sum", "mean"]).reset_index()
-            t2.columns = [chosen_var, "AssurÃ©s", "RÃ©clamations", "Taux moyen"]
+            t2.columns = [chosen_var, "Assurés", "Réclamations", "Taux moyen"]
             t2["Taux (%)"] = (t2["Taux moyen"] * 100).round(2)
-            t2["Proportion (%)"] = (t2["AssurÃ©s"] / len(df) * 100).round(2)
-            t2 = t2.drop(columns=["Taux moyen"]).sort_values("AssurÃ©s", ascending=False)
+            t2["Proportion (%)"] = (t2["Assurés"] / len(df) * 100).round(2)
+            t2 = t2.drop(columns=["Taux moyen"]).sort_values("Assurés", ascending=False)
             st.dataframe(t2, use_container_width=True, hide_index=True)
         else:
             st.dataframe(vc, use_container_width=True, hide_index=True)
 
     st.markdown("---")
-    tabs_extra = st.tabs(["ðŸ”— Matrice de CorrÃ©lation & DÃ©pendance", "ðŸ”€ Analyse BivariÃ©e CroisÃ©e", "ðŸ—ºï¸ RÃ©partition Territoriale (France)"])
+    tabs_extra = st.tabs(["🔗 Matrice de Corrélation & Dépendance", "🔀 Analyse Bivariée Croisée", "🗺️ Répartition Territoriale (France)"])
 
     with tabs_extra[0]:
-        stitle("Matrice de CorrÃ©lation LinÃ©aire (Pearson)", "CorrÃ©lations de Pearson entre prÃ©dicteurs numÃ©riques")
+        stitle("Matrice de Corrélation Linéaire (Pearson)", "Corrélations de Pearson entre prédicteurs numériques")
         num_for_corr = [c for c in df.select_dtypes(include="number").columns if c != "ID"]
         if len(num_for_corr) >= 2:
             df_corr = df[num_for_corr].dropna()
@@ -290,25 +289,25 @@ def show():
             fig_corr = px.imshow(corr_matrix,
                                  color_continuous_scale=["#0f0c29", "#302b63", "#818cf8", "#c084fc", "#f8faff"],
                                  zmin=-1, zmax=1, text_auto=True,
-                                 title="Matrice de corrÃ©lation de Pearson", aspect="auto")
+                                 title="Matrice de corrélation de Pearson", aspect="auto")
             fig_corr.update_layout(**PL, title_font_color="#f5d0fe", height=550)
             pch(fig_corr)
             if target_col in num_for_corr:
-                stitle("HiÃ©rarchie d'Association avec la Variable Cible", f"IntensitÃ© de corrÃ©lation avec {target_col}")
+                stitle("Hiérarchie d'Association avec la Variable Cible", f"Intensité de corrélation avec {target_col}")
                 corr_target = corr_matrix[target_col].drop(target_col).abs().sort_values(ascending=False)
                 fig_ci = px.bar(x=corr_target.values, y=corr_target.index, orientation="h",
                                 color=corr_target.values,
                                 color_continuous_scale=["#302b63", "#818cf8", "#c084fc"],
-                                title=f"Importance (|corrÃ©lation|) avec {target_col}",
-                                labels={"x": "CorrÃ©lation absolue", "y": "Variable"})
+                                title=f"Importance (|corrélation|) avec {target_col}",
+                                labels={"x": "Corrélation absolue", "y": "Variable"})
                 fig_ci.update_layout(**PL, title_font_color="#f5d0fe",
                                      coloraxis_showscale=False, height=380)
                 pch(fig_ci)
         else:
-            st.info("Nombre insuffisant de variables numÃ©riques pour calculer la matrice de corrÃ©lation.")
+            st.info("Nombre insuffisant de variables numériques pour calculer la matrice de corrélation.")
 
     with tabs_extra[1]:
-        stitle("Exploration Interactive des Relations BivariÃ©es", "Analyse conditionnelle entre deux variables")
+        stitle("Exploration Interactive des Relations Bivariées", "Analyse conditionnelle entre deux variables")
         avail = [c for c in df.columns if c != "ID"]
         cx1, cx2, cx3 = st.columns([2, 2, 1])
         with cx1:
@@ -319,7 +318,7 @@ def show():
             hue_opt = st.checkbox("Distinguer par la cible", value=True, key="cross_hue2")
         df_cr = df[[col_x, col_y, target_col]].dropna().copy()
         df_cr["Classe"] = df_cr[target_col].apply(
-            lambda x: "RÃ©clamation (1)" if x == 1 else "Sans rÃ©clamation (0)"
+            lambda x: "Réclamation (1)" if x == 1 else "Sans réclamation (0)"
         )
         x_num = pd.api.types.is_numeric_dtype(df[col_x])
         y_num = pd.api.types.is_numeric_dtype(df[col_y])
@@ -340,12 +339,12 @@ def show():
             pivot_hm = pd.crosstab(df_cr[col_x], df_cr[col_y])
             fig_c = px.imshow(pivot_hm,
                               color_continuous_scale=["#0f0c29", "#818cf8", "#c084fc"],
-                              title=f"Tableau croisÃ© : {col_x} Ã— {col_y}", text_auto=True)
+                              title=f"Tableau croisé : {col_x} × {col_y}", text_auto=True)
         fig_c.update_layout(**PL, title_font_color="#f5d0fe", legend=dict(font=dict(color="#c4b5fd")))
         pch(fig_c)
 
     with tabs_extra[2]:
-        stitle("Distribution Territoriale des Sinistres (France)", "Analyse spatiale des taux rÃ©els observÃ©s par dÃ©partement")
+        stitle("Distribution Territoriale des Sinistres (France)", "Analyse spatiale des taux réels observés par département")
         geojson_data = load_geojson()
         if "POSTAL_CODE" not in df.columns:
             st.info("La colonne POSTAL_CODE est absente. La carte n'est pas disponible pour ce fichier.")
@@ -354,7 +353,7 @@ def show():
         else:
             df_geo = df.copy()
             df_geo["DEPT"] = df_geo["POSTAL_CODE"].astype(str).str[:2].str.zfill(2)
-            dept_names = {"10": "Aube (10)", "21": "Cote-d'Or (21)",
+            dept_names = {"10": "Aube (10)", "21": "Côte-d'Or (21)",
                           "32": "Gers (32)", "92": "Hauts-de-Seine (92)"}
             all_depts_list = [
                 {"DEPT": feat["properties"]["code"], "Nom_Complet": feat["properties"]["nom"]}
@@ -371,7 +370,7 @@ def show():
             ).reset_index()
             geo_summary["Taux_pct"] = (geo_summary["Taux"] * 100).round(2)
             geo_summary["Nom_Departement"] = geo_summary["DEPT"].map(
-                lambda x: dept_names.get(x, f"Departement {x}")
+                lambda x: dept_names.get(x, f"Département {x}")
             )
             col_th, _ = st.columns([2, 3])
             with col_th:
@@ -380,17 +379,17 @@ def show():
                                          key="geo_theme")
 
             col_display = "Taux_pct"
-            label_color = "Taux Reel Reclamations (%)"
+            label_color = "Taux Réel Réclamations (%)"
 
             map_merged = df_france_all.merge(geo_summary, on="DEPT", how="left")
             map_merged["Taux_Affiche"] = map_merged[col_display].fillna(0)
             hn_col = "Nom_Departement_x" if "Nom_Departement_x" in map_merged.columns else "Nom_Departement"
             cg1, cg2, cg3 = st.columns(3)
             with cg1:
-                st.metric("Territoire", "France (96 dept.)", f"{len(geo_summary)} zones renseignees")
+                st.metric("Territoire", "France (96 dépt.)", f"{len(geo_summary)} zones renseignées")
             with cg2:
                 top_r = geo_summary.sort_values(col_display, ascending=False).iloc[0]
-                st.metric("Taux le plus eleve", f"{top_r[col_display]}%", top_r["Nom_Departement"])
+                st.metric("Taux le plus élevé", f"{top_r[col_display]}%", top_r["Nom_Departement"])
             with cg3:
                 low_r = geo_summary.sort_values(col_display, ascending=True).iloc[0]
                 st.metric("Taux le plus bas", f"{low_r[col_display]}%", low_r["Nom_Departement"])
@@ -407,7 +406,7 @@ def show():
                     center={"lat": 46.5, "lon": 2.2}, zoom=4.8, opacity=0.75,
                     hover_name=hn_col,
                     hover_data={"DEPT": True, "Assures": True, "Taux_Affiche": ":.1f"},
-                    labels={"Taux_Affiche": label_color, "DEPT": "Code", "Assures": "Total Assures"}
+                    labels={"Taux_Affiche": label_color, "DEPT": "Code", "Assures": "Total Assurés"}
                 )
             else:
                 fig_map = px.choropleth_mapbox(
@@ -419,7 +418,7 @@ def show():
                     center={"lat": 46.5, "lon": 2.2}, zoom=4.8, opacity=0.75,
                     hover_name=hn_col,
                     hover_data={"DEPT": True, "Assures": True, "Taux_Affiche": ":.1f"},
-                    labels={"Taux_Affiche": label_color, "DEPT": "Code", "Assures": "Total Assures"}
+                    labels={"Taux_Affiche": label_color, "DEPT": "Code", "Assures": "Total Assurés"}
                 )
             fig_map.update_layout(
                 margin=dict(r=0, t=10, l=0, b=0), height=560,
@@ -431,14 +430,14 @@ def show():
 
             st.markdown("---")
             dcols = ["Nom_Departement", "Assures", "Reclamations", "Taux_pct"]
-            crn = {"Nom_Departement": "Departement", "Assures": "Total Assures",
-                   "Reclamations": "Reclamations", "Taux_pct": "Taux Reel (%)"}
+            crn = {"Nom_Departement": "Département", "Assures": "Total Assurés",
+                   "Reclamations": "Réclamations", "Taux_pct": "Taux Réel (%)"}
             ex_cols = [c for c in dcols if c in geo_summary.columns]
             st.dataframe(geo_summary[ex_cols].rename(columns=crn), use_container_width=True, hide_index=True)
             cd1, cd2 = st.columns(2)
             with cd1:
                 eg = export_to_excel({"Cartographie": geo_summary[ex_cols].rename(columns=crn)})
-                st.download_button("ðŸ“¥ Telecharger les donnees (.xlsx)", data=eg,
+                st.download_button("📥 Télécharger les données (.xlsx)", data=eg,
                                    file_name="carte_reclamations.xlsx",
                                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                                    use_container_width=True)
@@ -446,11 +445,10 @@ def show():
                 n_cl = int(df[target_col].sum()) if pd.api.types.is_numeric_dtype(df[target_col]) else 0
                 rt = round(df[target_col].mean() * 100, 1) if pd.api.types.is_numeric_dtype(df[target_col]) else 0
                 pg = generate_pdf_report(
-                    title="Rapport Territorial - Donnees Observees",
+                    title="Rapport Territorial - Données Observées",
                     dataset_kpis={"total": len(df), "claims": n_cl, "rate": rt},
                     geo_df=geo_summary[ex_cols].rename(columns=crn)
                 )
-                st.download_button("ðŸ“„ Telecharger rapport (.pdf)", data=pg,
+                st.download_button("📄 Télécharger le rapport (.pdf)", data=pg,
                                    file_name="Rapport_Territorial.pdf",
                                    mime="application/pdf", use_container_width=True)
-
