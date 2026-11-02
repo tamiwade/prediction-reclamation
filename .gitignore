@@ -1,32 +1,11 @@
-# Environnement virtuel Python
 .venv/
 venv/
-env/
-
-# Cache Python
 __pycache__/
 *.pyc
 *.pyo
-*.pyd
-.Python
-
-# Fichiers Jupyter (trop lourds et non nécessaires au déploiement)
 *.ipynb
 .ipynb_checkpoints/
-
-# Fichiers Windows spécifiques
-lancer_application.bat
-*.bat
-
-# Variables d'environnement
 .env
-.env.*
-
-# Fichiers IDE
-.vscode/
-.idea/
-*.swp
-
-# Fichiers système
+*.bat
 .DS_Store
 Thumbs.db
