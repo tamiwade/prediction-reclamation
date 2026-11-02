@@ -19,11 +19,11 @@ except ImportError:
 from utils_export import export_to_excel, generate_pdf_report
 
 PLOTLY_LAYOUT = dict(
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(family="Inter", color="#c4c4e0"),
-    xaxis=dict(gridcolor="rgba(255,255,255,0.06)", linecolor="rgba(255,255,255,0.1)"),
-    yaxis=dict(gridcolor="rgba(255,255,255,0.06)", linecolor="rgba(255,255,255,0.1)"),
+    paper_bgcolor="#ffffff",
+    plot_bgcolor="#ffffff",
+    font=dict(family="Plus Jakarta Sans, Inter, sans-serif", color="#334155"),
+    xaxis=dict(gridcolor="#f1f5f9", linecolor="#cbd5e1", tickfont=dict(color="#475569")),
+    yaxis=dict(gridcolor="#f1f5f9", linecolor="#cbd5e1", tickfont=dict(color="#475569")),
     margin=dict(t=50, b=40, l=40, r=20),
 )
 
@@ -95,16 +95,17 @@ def compare_all_models(test_size, random_state):
     return pd.DataFrame(results).sort_values("AUC-ROC", ascending=False), roc_data
 
 def show():
-    st.markdown('<div style="color:#e0e0ff;font-size:1.8rem;font-weight:800;margin-bottom:6px;">Benchmark & Comparaison des Modèles</div>', unsafe_allow_html=True)
-    st.markdown('<div style="color:rgba(224,224,255,0.7);font-size:0.95rem;margin-bottom:28px;">Évaluez et comparez les performances de tous les modèles de Machine Learning</div>', unsafe_allow_html=True)
+    st.markdown('<div style="color:#0f172a;font-size:1.75rem;font-weight:800;margin-bottom:6px;letter-spacing:-0.5px;">Benchmark & Comparaison des Modèles</div>', unsafe_allow_html=True)
+    st.markdown('<div style="color:#64748b;font-size:0.95rem;margin-bottom:24px;">Évaluez et comparez les performances de tous les modèles de Machine Learning</div>', unsafe_allow_html=True)
 
-    with st.sidebar:
-        st.markdown("---")
-        st.markdown('<p style="color:rgba(224,224,255,0.6);font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Paramètres de comparaison</p>', unsafe_allow_html=True)
+    c_param1, c_param2, c_param3 = st.columns([2, 2, 2])
+    with c_param1:
         test_size  = st.slider("Taille du jeu test (%)", 10, 40, 20, key="cmp_test") / 100
+    with c_param2:
         rand_state = st.number_input("Graine aléatoire (Random state)", 0, 999, 42, key="cmp_rand")
-
-    run = st.button("🚀 Lancer le Benchmark des Modèles", key="compare_btn", type="primary")
+    with c_param3:
+        st.markdown("<div style='height:28px;'></div>", unsafe_allow_html=True)
+        run = st.button("🚀 Lancer le Benchmark des Modèles", key="compare_btn", type="primary")
 
     if run or "compare_results" in st.session_state:
         if run:
@@ -116,15 +117,15 @@ def show():
         best_model = results_df.iloc[0]["Modèle"]
         best_auc   = results_df.iloc[0]["AUC-ROC"]
 
-        st.success(f"Meilleur modèle : **{best_model}** (AUC = {best_auc:.4f})")
+        st.success(f"🏆 Meilleur modèle sélectionné : **{best_model}** avec un AUC-ROC de **{best_auc:.4f}**")
 
         # ── Tableau recap ──────────────────────────────────────────────────
-        st.markdown('<div style="color:#e0e0ff;font-size:1.05rem;font-weight:700;margin:20px 0 12px 0;">Tableau comparatif des performances</div>', unsafe_allow_html=True)
+        st.markdown('<div style="color:#0f172a;font-size:1.1rem;font-weight:700;margin:18px 0 12px 0;">Tableau comparatif des performances</div>', unsafe_allow_html=True)
 
         def highlight_best(s):
             if s.name in ["Accuracy","AUC-ROC","F1-Score","Précision","Rappel"]:
                 max_val = s.max()
-                return ["background: rgba(99,102,241,0.25); color:#818cf8; font-weight:700"
+                return ["background: #eef2ff; color:#4338ca; font-weight:700"
                         if v == max_val else "" for v in s]
             return [""] * len(s)
 
@@ -179,20 +180,20 @@ def show():
                                            var_name="Métrique", value_name="Score")
                 fig_bar = px.bar(df_melt, x="Modèle", y="Score", color="Métrique",
                                   barmode="group", text_auto=".3f",
-                                  color_discrete_sequence=["#818cf8","#c084fc","#38bdf8","#34d399","#fb923c"],
+                                  color_discrete_sequence=["#4f46e5","#7c3aed","#2563eb","#059669","#d97706"],
                                   title="Comparaison des métriques par modèle")
-                fig_bar.update_layout(**PLOTLY_LAYOUT, title_font_color="#e0e0ff",
-                                       legend=dict(font=dict(color="#c4c4e0")),
+                fig_bar.update_layout(**PLOTLY_LAYOUT, title_font_color="#0f172a",
+                                       legend=dict(font=dict(color="#334155")),
                                        yaxis_range=[0, 1.05])
                 st.plotly_chart(fig_bar, use_container_width=True, config={"displayModeBar":False})
 
                 # Radar chart
                 fig_radar = go.Figure()
                 radar_configs = [
-                    {"line": "#3b82f6", "fill": "rgba(59, 130, 246, 0.18)"},
-                    {"line": "#10b981", "fill": "rgba(16, 185, 129, 0.18)"},
-                    {"line": "#f59e0b", "fill": "rgba(245, 158, 11, 0.18)"},
-                    {"line": "#8b5cf6", "fill": "rgba(139, 92, 246, 0.18)"},
+                    {"line": "#4f46e5", "fill": "rgba(79, 70, 229, 0.12)"},
+                    {"line": "#059669", "fill": "rgba(5, 150, 105, 0.12)"},
+                    {"line": "#d97706", "fill": "rgba(217, 119, 6, 0.12)"},
+                    {"line": "#7c3aed", "fill": "rgba(124, 58, 237, 0.12)"},
                 ]
                 for i, (_, row) in enumerate(results_df.iterrows()):
                     vals = [row[m] for m in metric_sel]
@@ -204,82 +205,82 @@ def show():
                         theta=cats_closed,
                         fill="toself",
                         name=row["Modèle"],
-                        line=dict(color=cfg["line"], width=2),
+                        line=dict(color=cfg["line"], width=2.5),
                         fillcolor=cfg["fill"],
                         opacity=0.85,
                     ))
                 fig_radar.update_layout(
                     polar=dict(
-                        bgcolor="rgba(30,41,59,0.3)",
-                        radialaxis=dict(visible=True, range=[0, 1], gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="#94a3b8")),
-                        angularaxis=dict(gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="#cbd5e1")),
+                        bgcolor="#ffffff",
+                        radialaxis=dict(visible=True, range=[0, 1], gridcolor="#e2e8f0", tickfont=dict(color="#64748b")),
+                        angularaxis=dict(gridcolor="#e2e8f0", tickfont=dict(color="#334155")),
                     ),
-                    paper_bgcolor="rgba(0,0,0,0)",
-                    font=dict(family="Plus Jakarta Sans, Inter, sans-serif", color="#cbd5e1"),
+                    paper_bgcolor="#ffffff",
+                    font=dict(family="Plus Jakarta Sans, Inter, sans-serif", color="#334155"),
                     title="Radar comparatif des performances",
-                    title_font_color="#f8fafc",
-                    legend=dict(font=dict(color="#cbd5e1")),
+                    title_font_color="#0f172a",
+                    legend=dict(font=dict(color="#334155")),
                     margin=dict(t=60, b=40, l=60, r=60),
                 )
                 st.plotly_chart(fig_radar, use_container_width=True, config={"displayModeBar":False})
 
         with tab2:
             fig_roc = go.Figure()
-            colors_roc = {"Random Forest":"#818cf8","XGBoost":"#c084fc",
-                          "Régression Logistique":"#38bdf8","Arbre de Décision":"#34d399"}
+            colors_roc = {"Random Forest":"#4f46e5","XGBoost":"#7c3aed",
+                          "Régression Logistique":"#2563eb","Arbre de Décision":"#059669"}
             for name, (fpr, tpr, auc) in roc_data.items():
                 fig_roc.add_trace(go.Scatter(
                     x=fpr, y=tpr, mode="lines",
                     name=f"{name} (AUC={auc:.4f})",
-                    line=dict(color=colors_roc.get(name,"#818cf8"), width=2.5),
+                    line=dict(color=colors_roc.get(name,"#4f46e5"), width=2.5),
                 ))
             fig_roc.add_trace(go.Scatter(
                 x=[0,1], y=[0,1], mode="lines",
-                line=dict(color="rgba(255,255,255,0.25)", dash="dash"),
+                line=dict(color="#94a3b8", dash="dash"),
                 name="Aléatoire",
             ))
             fig_roc.update_layout(**PLOTLY_LAYOUT,
                                    title="Courbes ROC - Comparaison",
-                                   title_font_color="#e0e0ff",
-                                   legend=dict(font=dict(color="#c4c4e0")))
+                                   title_font_color="#0f172a",
+                                   legend=dict(font=dict(color="#334155")))
             st.plotly_chart(fig_roc, use_container_width=True, config={"displayModeBar":False})
 
         with tab3:
-            sort_metric = st.selectbox("Trier par", ["AUC-ROC","Accuracy","F1-Score","Precision","Recall"], key="sort_metric")
+            sort_metric = st.selectbox("Trier par", ["AUC-ROC","Accuracy","F1-Score","Précision","Rappel"], key="sort_metric")
             df_sorted = results_df.sort_values(sort_metric, ascending=True)
 
-            fig_h = px.bar(df_sorted, x=sort_metric, y="Modele", orientation="h",
+            fig_h = px.bar(df_sorted, x=sort_metric, y="Modèle", orientation="h",
                             color=sort_metric,
-                            color_continuous_scale=["#302b63","#6366f1","#c084fc"],
+                            color_continuous_scale=["#e0e7ff", "#6366f1", "#312e81"],
                             text=sort_metric,
                             title=f"Classement par {sort_metric}")
             fig_h.update_traces(texttemplate="%{text:.4f}", textposition="outside")
-            fig_h.update_layout(**PLOTLY_LAYOUT, title_font_color="#e0e0ff",
+            fig_h.update_layout(**PLOTLY_LAYOUT, title_font_color="#0f172a",
                                  coloraxis_showscale=False,
                                  xaxis_range=[0, 1.05])
             st.plotly_chart(fig_h, use_container_width=True, config={"displayModeBar":False})
 
             # Score cards
-            st.markdown('<div style="color:#e0e0ff;font-size:1rem;font-weight:700;margin:20px 0 12px 0;">Cartes de performance</div>', unsafe_allow_html=True)
+            st.markdown('<div style="color:#0f172a;font-size:1.05rem;font-weight:700;margin:20px 0 12px 0;">Cartes de performance synthétiques</div>', unsafe_allow_html=True)
             cols_score = st.columns(len(results_df))
-            clrs = ["#818cf8","#c084fc","#38bdf8","#34d399"]
+            clrs = ["#4f46e5","#7c3aed","#2563eb","#059669"]
             for i, (_, row) in enumerate(results_df.iterrows()):
                 with cols_score[i]:
-                    badge = "Meilleur" if row["Modele"] == best_model else ""
+                    badge = "⭐ Meilleur" if row["Modèle"] == best_model else ""
                     st.markdown(f"""
-                    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);
-                                border-top: 3px solid {clrs[i%4]};
-                                border-radius:14px;padding:20px 16px;text-align:center;">
-                        <div style="color:{clrs[i%4]};font-size:0.7rem;font-weight:600;text-transform:uppercase;
-                                    letter-spacing:0.08em;margin-bottom:6px;">{badge}</div>
-                        <div style="color:#e0e0ff;font-weight:700;font-size:0.88rem;margin-bottom:12px;">{row["Modele"]}</div>
-                        <div style="color:{clrs[i%4]};font-size:1.6rem;font-weight:800;">{row["AUC-ROC"]:.4f}</div>
-                        <div style="color:rgba(224,224,255,0.4);font-size:0.72rem;">AUC-ROC</div>
-                        <div style="margin-top:12px;color:rgba(224,224,255,0.6);font-size:0.78rem;line-height:1.8;">
-                            Acc: {row["Accuracy"]:.4f}<br>
-                            F1: {row["F1-Score"]:.4f}<br>
-                            Prec: {row["Precision"]:.4f}<br>
-                            Rec: {row["Recall"]:.4f}
+                    <div style="background:#ffffff; border:1px solid #e2e8f0;
+                                border-top: 4px solid {clrs[i%4]};
+                                border-radius:14px; padding:20px 16px; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.03);">
+                        <div style="color:{clrs[i%4]}; font-size:0.75rem; font-weight:700; text-transform:uppercase;
+                                    letter-spacing:0.08em; min-height:18px; margin-bottom:4px;">{badge}</div>
+                        <div style="color:#0f172a; font-weight:700; font-size:0.92rem; margin-bottom:10px;">{row["Modèle"]}</div>
+                        <div style="color:{clrs[i%4]}; font-size:1.65rem; font-weight:800;">{row["AUC-ROC"]:.4f}</div>
+                        <div style="color:#64748b; font-size:0.74rem; font-weight:600;">AUC-ROC</div>
+                        <div style="margin-top:12px; color:#475569; font-size:0.8rem; line-height:1.75; border-top:1px solid #f1f5f9; padding-top:8px;">
+                            Accuracy: <b>{row["Accuracy"]:.4f}</b><br>
+                            F1-Score: <b>{row["F1-Score"]:.4f}</b><br>
+                            Précision: <b>{row["Précision"]:.4f}</b><br>
+                            Rappel: <b>{row["Rappel"]:.4f}</b>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
